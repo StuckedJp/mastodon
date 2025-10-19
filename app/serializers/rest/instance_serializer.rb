@@ -9,6 +9,7 @@ class REST::InstanceSerializer < ActiveModel::Serializer
 
   include InstanceHelper
   include RoutingHelper
+  include FullstuckCapabilitiesHelper
 
   attributes :domain, :title, :version, :source_url, :description,
              :usage, :thumbnail, :icon, :languages, :configuration,
@@ -113,6 +114,20 @@ class REST::InstanceSerializer < ActiveModel::Serializer
           local: Setting.local_topic_feed_access,
           remote: Setting.remote_topic_feed_access,
         },
+      },
+
+      emoji_reactions: {
+        max_reactions: EmojiReaction::EMOJI_REACTION_LIMIT,
+        max_reactions_per_account: EmojiReaction::EMOJI_REACTION_PER_ACCOUNT_LIMIT,
+        max_reactions_per_remote_account: EmojiReaction::EMOJI_REACTION_PER_REMOTE_ACCOUNT_LIMIT,
+      },
+
+      reaction_deck: {
+        max_emojis: User::REACTION_DECK_MAX,
+      },
+
+      reactions: {
+        max_reactions: EmojiReaction::EMOJI_REACTION_PER_ACCOUNT_LIMIT,
       },
 
       limited_federation: limited_federation?,

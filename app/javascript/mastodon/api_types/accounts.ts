@@ -12,6 +12,31 @@ export interface ApiAccountRoleJSON {
   name: string;
 }
 
+export interface ApiAccountOtherSettingsJSON {
+  noindex: boolean;
+  hide_network: boolean;
+  hide_statuses_count: boolean;
+  hide_following_count: boolean;
+  hide_followers_count: boolean;
+  translatable_private: boolean;
+  link_preview: boolean;
+  emoji_reaction_policy:
+    | 'allow'
+    | 'outside_only'
+    | 'following_only'
+    | 'followers_only'
+    | 'mutuals_only'
+    | 'block';
+  subscription_policy: 'allow' | 'followers_only' | 'block';
+}
+
+export interface ApiServerFeaturesJSON {
+  circle: boolean;
+  emoji_reaction: boolean;
+  status_reference: boolean;
+  legacy_quote: boolean;
+}
+
 // See app/serializers/rest/account_serializer.rb
 export interface BaseApiAccountJSON {
   acct: string;
@@ -34,7 +59,9 @@ export interface BaseApiAccountJSON {
   locked: boolean;
   noindex?: boolean;
   note: string;
+  other_settings: ApiAccountOtherSettingsJSON;
   roles?: ApiAccountJSON[];
+  server_features: ApiServerFeaturesJSON;
   statuses_count: number;
   uri: string;
   url?: string;

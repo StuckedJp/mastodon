@@ -1129,8 +1129,9 @@
   vertical-align: middle;
   object-fit: contain;
   margin: -0.2ex 0.15em 0.2ex;
-  width: 16px;
-  height: 16px;
+  min-width: 20px;
+  max-width: min(10em, 100%);
+  height: 20px;
 
   img {
     width: auto;
@@ -1151,7 +1152,7 @@
   position: relative;
   overflow-wrap: break-word;
   font-weight: 400;
-  overflow: hidden;
+  // overflow: hidden;
   text-overflow: ellipsis;
   font-size: 15px;
   line-height: 22px;
@@ -1171,9 +1172,14 @@
   }
 
   .emojione {
-    width: 20px;
-    height: 20px;
+    min-width: var(--content-emoji-size);
+    max-width: min(10em, 100%);
+    height: var(--content-emoji-size);
     margin: -3px 0 0;
+    transition: transform 0.2s ease;
+    &:hover {
+      transform: scale(2);
+    }
   }
 
   p {
@@ -1394,7 +1400,8 @@
   overflow-y: auto;
 
   .emojione {
-    width: 20px;
+    min-width: 20px;
+    max-width: min(10em, 100%);
     height: 20px;
     margin: -3px 0 0;
   }
@@ -1564,7 +1571,8 @@
     & > .hashtag-bar,
     & > .content-warning,
     & > .filter-warning,
-    & > .status__quote {
+    & > .status__quote,
+    & > .status__emoji-reactions-bar {
       margin-inline-start: var(--thread-margin);
       width: calc(100% - var(--thread-margin));
     }
@@ -1796,6 +1804,50 @@
   }
 }
 
+.status__emoji-reactions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin: 12px 0 2px 4px;
+
+  .emoji-reactions-bar__button {
+    background: $emoji-reaction-color;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    height: 40px;
+
+    &.toggled {
+      background: $emoji-reaction-selected-color;
+    }
+
+    > .emoji {
+      display: block;
+      height: 36px;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(2);
+      }
+
+      img {
+        margin-top: 0;
+        margin-bottom: 0;
+        height: 32px;
+      }
+    }
+
+    .count {
+      display: block;
+      margin: 0 2px;
+      color: $ui-secondary-color;
+    }
+  }
+}
+
 .status__action-bar {
   display: flex;
   justify-content: space-between;
@@ -1821,9 +1873,14 @@
     line-height: 24px;
 
     .emojione {
-      width: 24px;
-      height: 24px;
+      min-width: var(--detail-content-emoji-size);
+      max-width: min(10em, 100%);
+      height: var(--detail-content-emoji-size);
       margin: -1px 0 0;
+      transition: transform 0.2s ease;
+      &:hover {
+        transform: scale(2);
+      }
     }
   }
 
@@ -7142,7 +7199,8 @@ a.status-card {
     line-height: 24px;
 
     .emojione {
-      width: 24px;
+      min-width: 24px;
+      max-width: min(10em, 100%);
       height: 24px;
       margin: -1px 0 0;
     }
@@ -7348,10 +7406,31 @@ a.status-card {
   position: relative;
   width: 100%;
   min-height: 64px;
+  max-height: 60vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 2px;
+
+  &--row3 {
+    grid-template-rows: 34% 33% 33%;
+  }
+
+  &--row4 {
+    grid-template-rows: 25% 25% 25% 25%;
+  }
+
+  &--column3 {
+    grid-template-columns: 33% 34% 33%;
+  }
+
+  &--column4 {
+    grid-template-columns: 25% 25% 25% 25%;
+  }
+
+  &__compact {
+    max-height: 24vh;
+  }
 
   &--layout-2 {
     & > .media-gallery__item:nth-child(1) {
@@ -8343,6 +8422,48 @@ noscript {
   background: color.change($base-overlay-background, $alpha: 0.5);
 }
 
+.reaction_deck_container {
+  &__row {
+    display: flex;
+    height: 32px;
+    margin: 8px 16px 12px 4px;
+
+    .handle {
+      font-size: 24px;
+    }
+
+    .reaction_deck__emoji {
+      flex: 1;
+    }
+
+    &__overlay {
+      margin-inline-start: 48px;
+    }
+  }
+}
+
+.reaction_deck__emoji {
+  &__wrapper {
+    display: flex;
+
+    .emojione {
+      min-width: 24px;
+      height: 24px;
+    }
+
+    .emoji-button {
+      margin-left: 20px;
+      margin-right: 24px;
+      padding: 0;
+    }
+
+    &__content {
+      display: flex;
+      flex: 1;
+    }
+  }
+}
+
 .focal-point {
   position: relative;
   cursor: grab;
@@ -8474,7 +8595,8 @@ noscript {
       margin-bottom: 16px;
 
       .emojione {
-        width: 22px;
+        min-width: 22px;
+        max-width: min(10em, 100%);
         height: 22px;
       }
 
@@ -11073,6 +11195,25 @@ noscript {
       &__wrapper {
         display: flex;
         justify-content: space-between;
+
+        &__for_emoji_reaction {
+          display: flex;
+          justify-content: start;
+
+          .emoji {
+            display: inline-block;
+            width: 40px;
+            align-self: center;
+
+            img {
+              height: 20px;
+            }
+          }
+
+          .notification-group__avatar-group {
+            margin-left: 8px;
+          }
+        }
       }
 
       &__label {

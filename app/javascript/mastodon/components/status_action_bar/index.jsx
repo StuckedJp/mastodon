@@ -19,8 +19,9 @@ import { identityContextPropShape, withIdentity } from 'mastodon/identity_contex
 import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'mastodon/permissions';
 import { WithRouterPropTypes } from 'mastodon/utils/react_router';
 
+import EmojiPickerDropdown from '../../features/compose/containers/emoji_picker_dropdown_container.js';
 import { Dropdown } from 'mastodon/components/dropdown_menu';
-import { me, quickBoosting } from '../../initial_state';
+import { enableEmojiReaction , me, isHideItem, quickBoosting } from '../../initial_state';
 
 import { IconButton } from '../icon_button';
 import { BoostButton } from '../status/boost_button';
@@ -41,6 +42,7 @@ const messages = defineMessages({
   replyAll: { id: 'status.replyAll', defaultMessage: 'Reply to thread' },
   favourite: { id: 'status.favourite', defaultMessage: 'Favorite' },
   removeFavourite: { id: 'status.remove_favourite', defaultMessage: 'Remove from favorites' },
+  emojiReaction: { id: 'status.emoji_reaction', defaultMessage: 'Emoji reaction' },
   bookmark: { id: 'status.bookmark', defaultMessage: 'Bookmark' },
   removeBookmark: { id: 'status.remove_bookmark', defaultMessage: 'Remove bookmark' },
   open: { id: 'status.open', defaultMessage: 'Expand this status' },
@@ -83,6 +85,7 @@ class StatusActionBar extends ImmutablePureComponent {
     contextType: PropTypes.string,
     onReply: PropTypes.func,
     onFavourite: PropTypes.func,
+    onEmojiReact: PropTypes.func,
     onDelete: PropTypes.func,
     onRevokeQuote: PropTypes.func,
     onQuotePolicyChange: PropTypes.func,
@@ -147,6 +150,16 @@ class StatusActionBar extends ImmutablePureComponent {
       this.props.onFavourite(this.props.status);
     } else {
       this.props.onInteractionModal(this.props.status);
+    }
+  };
+
+  handleEmojiPick = (data) => {
+    const { signedIn } = this.props.identity;
+
+    if (signedIn) {
+      this.props.onEmojiReact(this.props.status, data);
+    } else {
+      this.props.onInteractionModal('favourite', this.props.status);
     }
   };
 
@@ -379,6 +392,21 @@ class StatusActionBar extends ImmutablePureComponent {
       replyTitle = intl.formatMessage(messages.replyAll);
     }
 
+    const emojiReactionAvailableServer = !isHideItem('emoji_reaction_unavailable_server') || account.getIn(['server_features', 'emoji_reaction']);
+    const emojiReactionPolicy = account.getIn(['other_settings', 'emoji_reaction_policy']) || 'allow';
+    const following = emojiReactionPolicy !== 'followers_only' || (relationship && relationship.get('following'));
+    const followed = emojiReactionPolicy !== 'following_only' || (relationship && relationship.get('followed_by'));
+    const mutual = emojiReactionPolicy !== 'mutuals_only' || (relationship && relationship.get('following') && relationship.get('followed_by'));
+    const outside = emojiReactionPolicy !== 'outside_only' || (relationship && (relationship.get('following') || relationship.get('followed_by')));
+    const denyFromAll = emojiReactionPolicy !== 'block' && emojiReactionPolicy !== 'block';
+    const emojiPickerDropdown = (enableEmojiReaction && emojiReactionAvailableServer && denyFromAll && (writtenByMe || (following && followed && mutual && outside)) && (
+      <div className='status__action-bar__button-wrapper'>
+        <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} inverted={false} />
+      </div>
+    )) || (enableEmojiReaction && (
+      <div className='status__action-bar__button-wrapper status__action-bar__button-wrapper__blank' />
+    )) || null;
+
     const bookmarkTitle = intl.formatMessage(status.get('bookmarked') ? messages.removeBookmark : messages.bookmark);
     const favouriteTitle = intl.formatMessage(status.get('favourited') ? messages.removeFavourite : messages.favourite);
     const isReply = status.get('in_reply_to_account_id') === status.getIn(['account', 'id']);
@@ -399,6 +427,7 @@ class StatusActionBar extends ImmutablePureComponent {
         <div className='status__action-bar__button-wrapper'>
           <IconButton className='status__action-bar__button bookmark-icon' disabled={!signedIn} active={status.get('bookmarked')} title={bookmarkTitle} icon='bookmark' iconComponent={status.get('bookmarked') ? BookmarkIcon : BookmarkBorderIcon} onClick={this.handleBookmarkClick} />
         </div>
+        {emojiPickerDropdown}
         <RemoveQuoteHint className='status__action-bar__button-wrapper' canShowHint={shouldShowQuoteRemovalHint}>
           {(dismissQuoteHint) => (
             <Dropdown

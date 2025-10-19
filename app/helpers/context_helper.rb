@@ -23,8 +23,13 @@ module ContextHelper
     indexable: { 'toot' => 'http://joinmastodon.org/ns#', 'indexable' => 'toot:indexable' },
     memorial: { 'toot' => 'http://joinmastodon.org/ns#', 'memorial' => 'toot:memorial' },
     voters_count: { 'toot' => 'http://joinmastodon.org/ns#', 'votersCount' => 'toot:votersCount' },
+    emoji_reactions: { 'fedibird' => 'http://fedibird.com/ns#', 'emojiReactions' => { '@id' => 'fedibird:emojiReactions', '@type' => '@id' } },
+    other_setting: { 'fedibird' => 'http://fedibird.com/ns#', 'otherSetting' => 'fedibird:otherSetting' },
+    keywords: { 'schema' => 'http://schema.org#', 'keywords' => 'schema:keywords' },
+    license: { 'schema' => 'http://schema.org#', 'license' => 'schema:license' },
     suspended: { 'toot' => 'http://joinmastodon.org/ns#', 'suspended' => 'toot:suspended' },
     attribution_domains: { 'toot' => 'http://joinmastodon.org/ns#', 'attributionDomains' => { '@id' => 'toot:attributionDomains', '@type' => '@id' } },
+    misskey_license: { 'misskey' => 'https://misskey-hub.net/ns#', '_misskey_license' => 'misskey:_misskey_license' },
     quote_requests: { 'QuoteRequest' => 'https://w3id.org/fep/044f#QuoteRequest' },
     quotes: {
       'quote' => 'https://w3id.org/fep/044f#quote',

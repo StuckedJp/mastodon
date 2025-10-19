@@ -351,12 +351,14 @@ class ActivityPub::ProcessAccountService < BaseService
     shortcode = tag['name'].delete(':')
     image_url = tag['icon']['url']
     uri       = tag['id']
+    sensitive = tag['isSensitive'].presence || false
+    license   = tag['license']
     updated   = tag['updated']
     emoji     = CustomEmoji.find_by(shortcode: shortcode, domain: @account.domain)
 
     return unless emoji.nil? || image_url != emoji.image_remote_url || (updated && updated >= emoji.updated_at)
 
-    emoji ||= CustomEmoji.new(domain: @account.domain, shortcode: shortcode, uri: uri)
+    emoji ||= CustomEmoji.new(domain: @account.domain, shortcode: shortcode, uri: uri, is_sensitive: sensitive, license: license)
     emoji.image_remote_url = image_url
     emoji.save
   end

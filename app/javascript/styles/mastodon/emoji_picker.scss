@@ -148,6 +148,12 @@
 .emoji-mart-category .emoji-mart-emoji {
   cursor: pointer;
 
+  &.emoji-mart-emoji-custom img {
+    width: auto !important;
+    min-width: 22px;
+    max-width: 40px;
+  }
+
   span {
     z-index: 1;
     position: relative;

@@ -5,7 +5,6 @@ import type { List } from 'immutable';
 import { EmojiHTML } from '@/mastodon/components/emoji/html';
 import { useElementHandledLink } from '@/mastodon/components/status/handled_link';
 import type { Status } from '@/mastodon/models/status';
-
 import type { Mention } from './embedded_status';
 
 export const EmbeddedStatusContent: React.FC<{

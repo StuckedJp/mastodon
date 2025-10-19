@@ -28,6 +28,7 @@ import {
   STATUS_TRANSLATE_UNDO,
   STATUS_FETCH_REQUEST,
   STATUS_FETCH_FAIL,
+  STATUS_EMOJI_REACTION_UPDATE,
 } from '../actions/statuses';
 import { setStatusQuotePolicy } from '../actions/statuses_typed';
 
@@ -42,6 +43,33 @@ const deleteStatus = (state, id, references) => {
   });
 
   return state.delete(id);
+};
+
+const updateStatusEmojiReaction = (state, emoji_reaction) => {
+  emoji_reaction.me = emoji_reaction.account_ids ? emoji_reaction.account_ids.indexOf(me) >= 0 : false;
+
+  const status = state.get(emoji_reaction.status_id);
+  if (!status) return state;
+
+  let emoji_reactions = Array.from(status.get('emoji_reactions') || []);
+
+  if (emoji_reaction.count > 0) {
+    const old_emoji = emoji_reactions.find((er) => er.get('name') === emoji_reaction.name);
+    if (old_emoji) {
+      const index = emoji_reactions.indexOf(old_emoji);
+      emoji_reactions[index] = old_emoji.merge({ account_ids: ImmutableList(emoji_reaction.account_ids), count: emoji_reaction.count, me: emoji_reaction.me });
+    } else {
+      emoji_reactions.push(ImmutableMap(emoji_reaction));
+    }
+  } else {
+    emoji_reactions = emoji_reactions.filter((er) => er.get('name') !== emoji_reaction.name);
+  }
+
+  const emoji_reactions_count = emoji_reactions.map((er) => Array.from(er.get('account_ids') || [])).reduce((prev, current) => prev + current.length, 0);
+
+  return state
+    .setIn([emoji_reaction.status_id, 'emoji_reactions'], ImmutableList(emoji_reactions))
+    .setIn([emoji_reaction.status_id, 'emoji_reactions_count'], emoji_reactions_count);
 };
 
 const statusTranslateSuccess = (state, id, translation) => {
@@ -147,6 +175,8 @@ export default function statuses(state = initialState, action) {
     return statusTranslateSuccess(state, action.id, action.translation);
   case STATUS_TRANSLATE_UNDO:
     return statusTranslateUndo(state, action.id);
+  case STATUS_EMOJI_REACTION_UPDATE:
+    return updateStatusEmojiReaction(state, action.emoji_reaction);
   default:
     if(reblog.pending.match(action))
       return state.setIn([action.meta.arg.statusId, 'reblogged'], true);

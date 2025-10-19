@@ -85,6 +85,9 @@ const emojifyTextNode = (node, customEmojis) => {
       replacement.setAttribute('src', filename);
       replacement.setAttribute('data-original', custom_emoji.url);
       replacement.setAttribute('data-static', custom_emoji.static_url);
+      if (custom_emoji.width && custom_emoji.height) {
+        replacement.style.aspectRatio = `${custom_emoji.width} / ${custom_emoji.height}`;
+      }
     } else { // start of an unicode emoji
       rend = i + unicode_emoji.length;
 
@@ -175,6 +178,8 @@ export const buildCustomEmojis = (customEmojis) => {
     const shortcode = emoji.get('shortcode');
     const url       = autoPlayGif ? emoji.get('url') : emoji.get('static_url');
     const name      = shortcode.replace(':', '');
+    const aliases   = emoji.get('aliases');
+    const keywords  = aliases ? [name, ...aliases] : [name];
 
     emojis.push({
       id: name,
@@ -182,7 +187,7 @@ export const buildCustomEmojis = (customEmojis) => {
       short_names: [name],
       text: '',
       emoticons: [],
-      keywords: [name],
+      keywords,
       imageUrl: url,
       custom: true,
       customCategory: emoji.get('category'),

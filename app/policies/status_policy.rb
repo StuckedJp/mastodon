@@ -32,6 +32,10 @@ class StatusPolicy < ApplicationPolicy
     show? && !blocking_author?
   end
 
+  def emoji_reaction?
+    show? && !blocking_author?
+  end
+
   def destroy?
     owned?
   end

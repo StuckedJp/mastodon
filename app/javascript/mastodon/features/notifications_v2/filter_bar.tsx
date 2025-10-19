@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
 import HomeIcon from '@/material-icons/400-24px/home-fill.svg?react';
 import InsertChartIcon from '@/material-icons/400-24px/insert_chart.svg?react';
+import EmojiReactionIcon from '@/material-icons/400-24px/mood.svg?react';
 import PersonAddIcon from '@/material-icons/400-24px/person_add.svg?react';
 import RepeatIcon from '@/material-icons/400-24px/repeat.svg?react';
 import ReplyAllIcon from '@/material-icons/400-24px/reply_all.svg?react';
@@ -22,6 +23,10 @@ const tooltips = defineMessages({
   favourites: {
     id: 'notifications.filter.favourites',
     defaultMessage: 'Favorites',
+  },
+  emojiReactions: {
+    id: 'notifications.filter.emoji_reactions',
+    defaultMessage: 'Stamps',
   },
   boosts: { id: 'notifications.filter.boosts', defaultMessage: 'Boosts' },
   polls: { id: 'notifications.filter.polls', defaultMessage: 'Poll results' },
@@ -90,6 +95,14 @@ export const FilterBar: React.FC = () => {
           title={intl.formatMessage(tooltips.favourites)}
         >
           <Icon id='star' icon={StarIcon} />
+        </BarButton>
+        <BarButton
+          selectedFilter={selectedFilter}
+          type='emoji_reaction'
+          key='emoji_reaction'
+          title={intl.formatMessage(tooltips.emojiReactions)}
+        >
+          <Icon id='smile-o' icon={EmojiReactionIcon} />
         </BarButton>
         <BarButton
           selectedFilter={selectedFilter}

@@ -47,6 +47,7 @@ const messages = defineMessages({
   deleteSuccess: { id: 'status.delete.success', defaultMessage: 'Post deleted' },
 });
 
+export const STATUS_EMOJI_REACTION_UPDATE = 'STATUS_EMOJI_REACTION_UPDATE';
 export function fetchStatusRequest(id, skipLoading) {
   return {
     type: STATUS_FETCH_REQUEST,
@@ -350,6 +351,11 @@ export const undoStatusTranslation = (id, pollId) => ({
   type: STATUS_TRANSLATE_UNDO,
   id,
   pollId,
+});
+
+export const updateEmojiReaction = (emoji_reaction) => ({
+  type: STATUS_EMOJI_REACTION_UPDATE,
+  emoji_reaction,
 });
 
 export const navigateToStatus = (statusId) => {

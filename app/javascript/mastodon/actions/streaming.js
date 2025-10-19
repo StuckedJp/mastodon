@@ -11,7 +11,7 @@ import {
 } from './announcements';
 import { updateConversations } from './conversations';
 import { processNewNotificationForGroups, refreshStaleNotificationGroups, pollRecentNotifications as pollRecentGroupNotifications } from './notification_groups';
-import { updateNotifications } from './notifications';
+import { updateNotifications, updateEmojiReactions } from './notifications';
 import { updateStatus } from './statuses';
 import {
   updateTimeline,
@@ -114,6 +114,10 @@ export const connectTimelineStream = (timelineId, channelName, params = {}, opti
           dispatch(processNewNotificationForGroups(notificationJSON));
           break;
         }
+        case 'emoji_reaction':
+          // @ts-expect-error
+          dispatch(updateEmojiReactions(JSON.parse(data.payload)));
+          break;
         case 'notifications_merged': {
           dispatch(refreshStaleNotificationGroups());
           break;

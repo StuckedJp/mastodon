@@ -8,13 +8,15 @@ class REST::StatusSerializer < ActiveModel::Serializer
   attributes :id, :created_at, :in_reply_to_id, :in_reply_to_account_id,
              :sensitive, :spoiler_text, :visibility, :language,
              :uri, :url, :replies_count, :reblogs_count,
-             :favourites_count, :quotes_count, :edited_at
+             :favourites_count, :quotes_count, :edited_at,
+             :emoji_reactions, :emoji_reactions_count
 
   attribute :favourited, if: :current_user?
   attribute :reblogged, if: :current_user?
   attribute :muted, if: :current_user?
   attribute :bookmarked, if: :current_user?
   attribute :pinned, if: :pinnable?
+  attribute :reactions, if: :reactions?
   has_many :filtered, serializer: REST::FilterResultSerializer, if: :current_user?
 
   attribute :content, unless: :source_requested?
@@ -111,6 +113,41 @@ class REST::StatusSerializer < ActiveModel::Serializer
     end
   end
 
+  def emoji_reactions
+    show_emoji_reaction? ? object.emoji_reactions_grouped_by_name(current_user&.account, permitted_account_ids: emoji_reaction_permitted_account_ids) : []
+  end
+
+  def emoji_reactions_count
+    if current_user&.account.nil?
+      return 0 unless Setting.enable_emoji_reaction
+
+      object.account.emoji_reaction_policy == :allow ? object.emoji_reactions_count : 0
+    else
+      show_emoji_reaction? ? object.emoji_reactions_count : 0
+    end
+  end
+
+  def show_emoji_reaction?
+    if relationships
+      return true if relationships.emoji_reaction_allows_map.nil?
+
+      relationships.emoji_reaction_allows_map[object.account_id] || false
+    else
+      object.account.show_emoji_reaction?(current_user&.account)
+    end
+  end
+
+  def reactions
+    emoji_reactions.tap do |rs|
+      rs.each do |emoji_reaction|
+        emoji_reaction['name'] = emoji_reaction['domain'].present? ? "#{emoji_reaction['name']}@#{emoji_reaction['domain']}" : emoji_reaction['name']
+        emoji_reaction.delete('account_ids')
+        emoji_reaction.delete('me')
+        emoji_reaction.delete('domain')
+      end
+    end
+  end
+
   def reblogged
     if relationships
       relationships.reblogs_map[object.id] || false
@@ -158,6 +195,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
       StatusRelationshipsPresenter::PINNABLE_VISIBILITIES.include?(object.visibility)
   end
 
+  def reactions?
+    current_user? && current_user.setting_emoji_reaction_streaming_notify_impl2
+  end
+
   def source_requested?
     instance_options[:source_requested]
   end
@@ -178,6 +219,10 @@ class REST::StatusSerializer < ActiveModel::Serializer
 
   def relationships
     instance_options && instance_options[:relationships]
+  end
+
+  def emoji_reaction_permitted_account_ids
+    current_user.present? && instance_options && instance_options[:emoji_reaction_permitted_account_ids]&.permitted_account_ids
   end
 
   class ApplicationSerializer < ActiveModel::Serializer

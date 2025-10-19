@@ -18,9 +18,10 @@ import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'mastodon/
 
 import { IconButton } from '../../../components/icon_button';
 import { Dropdown } from 'mastodon/components/dropdown_menu';
-import { me, quickBoosting } from '../../../initial_state';
+import { enableEmojiReaction , me, isHideItem, quickBoosting } from '../../../initial_state';
 import { BoostButton } from '@/mastodon/components/status/boost_button';
 import { quoteItemState, selectStatusState } from '@/mastodon/components/status/boost_button_utils';
+import EmojiPickerDropdown from '../../compose/containers/emoji_picker_dropdown_container';
 
 const messages = defineMessages({
   delete: { id: 'status.delete', defaultMessage: 'Delete' },
@@ -75,6 +76,7 @@ class ActionBar extends PureComponent {
     onReply: PropTypes.func.isRequired,
     onReblog: PropTypes.func.isRequired,
     onFavourite: PropTypes.func.isRequired,
+    onEmojiReact: PropTypes.func.isRequired,
     onBookmark: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     onRevokeQuote: PropTypes.func,
@@ -206,6 +208,10 @@ class ActionBar extends PureComponent {
     navigator.clipboard.writeText(url);
   };
 
+  handleEmojiPick = (data) => {
+    this.props.onEmojiReact(this.props.status, data);
+  };
+
   render () {
     const { status, relationship, statusQuoteState, quotedAccountId, intl } = this.props;
     const { signedIn, permissions } = this.props.identity;
@@ -322,6 +328,22 @@ class ActionBar extends PureComponent {
       replyIconComponent = ReplyAllIcon;
     }
 
+    const reblogPrivate = status.getIn(['account', 'id']) === me && status.get('visibility') === 'private';
+    const emojiReactionAvailableServer = !isHideItem('emoji_reaction_unavailable_server') || account.getIn(['server_features', 'emoji_reaction']);
+    const emojiReactionPolicy = account.getIn(['other_settings', 'emoji_reaction_policy']) || 'allow';
+    const following = emojiReactionPolicy !== 'followers_only' || (relationship && relationship.get('following'));
+    const followed = emojiReactionPolicy !== 'following_only' || (relationship && relationship.get('followed_by'));
+    const mutual = emojiReactionPolicy !== 'mutuals_only' || (relationship && relationship.get('following') && relationship.get('followed_by'));
+    const outside = emojiReactionPolicy !== 'outside_only' || (relationship && (relationship.get('following') || relationship.get('followed_by')));
+    const denyFromAll = emojiReactionPolicy !== 'block' && emojiReactionPolicy !== 'block';
+    const emojiPickerDropdown = (enableEmojiReaction && emojiReactionAvailableServer && denyFromAll && (writtenByMe || (following && followed && mutual && outside)) && (
+      <div className='detailed-status__button'>
+        <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} inverted={false} />
+      </div>
+    )) || (enableEmojiReaction && (
+      <div className='detailed-status__button__blank' />
+    )) || null;
+
     const bookmarkTitle = intl.formatMessage(status.get('bookmarked') ? messages.removeBookmark : messages.bookmark);
     const favouriteTitle = intl.formatMessage(status.get('favourited') ? messages.removeFavourite : messages.favourite);
 
@@ -333,6 +355,7 @@ class ActionBar extends PureComponent {
         </div>
         <div className='detailed-status__button'><IconButton className='star-icon' animate active={status.get('favourited')} title={favouriteTitle} icon='star' iconComponent={status.get('favourited') ? StarIcon : StarBorderIcon} onClick={this.handleFavouriteClick} /></div>
         <div className='detailed-status__button'><IconButton className='bookmark-icon' disabled={!signedIn} active={status.get('bookmarked')} title={bookmarkTitle} icon='bookmark' iconComponent={status.get('bookmarked') ? BookmarkIcon : BookmarkBorderIcon} onClick={this.handleBookmarkClick} /></div>
+        {emojiPickerDropdown}
 
         <div className='detailed-status__action-bar-dropdown'>
           <Dropdown icon='ellipsis-h' iconComponent={MoreHorizIcon} status={status} items={menu} direction='left' title={intl.formatMessage(messages.more)} />

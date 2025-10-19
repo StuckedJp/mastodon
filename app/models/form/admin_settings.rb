@@ -36,6 +36,11 @@ class Form::AdminSettings
     status_page_url
     captcha_enabled
     authorized_fetch
+    receive_other_servers_emoji_reaction
+    streaming_other_servers_emoji_reaction
+    streaming_local_emoji_reaction
+    enable_emoji_reaction
+    emoji_reaction_disallow_domains
     app_icon
     favicon
     min_age
@@ -66,6 +71,10 @@ class Form::AdminSettings
     require_invite_text
     captcha_enabled
     authorized_fetch
+    receive_other_servers_emoji_reaction
+    streaming_other_servers_emoji_reaction
+    streaming_local_emoji_reaction
+    enable_emoji_reaction
   ).freeze
 
   UPLOAD_KEYS = %i(
@@ -82,6 +91,10 @@ class Form::AdminSettings
   OVERRIDEN_SETTINGS = {
     authorized_fetch: :authorized_fetch_mode?,
   }.freeze
+
+  STRING_ARRAY_KEYS = %i(
+    emoji_reaction_disallow_domains
+  ).freeze
 
   DESCRIPTION_LIMIT = 200
   DOMAIN_BLOCK_AUDIENCES = %w(disabled users all).freeze

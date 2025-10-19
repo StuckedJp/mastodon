@@ -11,6 +11,7 @@ import {
 import { submitMarkers } from './markers';
 import { notificationsUpdate } from "./notifications_typed";
 import { register as registerPushNotifications } from './push_notifications';
+import { STATUS_EMOJI_REACTION_UPDATE } from './statuses';
 
 export * from "./notifications_typed";
 
@@ -22,7 +23,16 @@ export const NOTIFICATIONS_SET_BROWSER_PERMISSION = 'NOTIFICATIONS_SET_BROWSER_P
 defineMessages({
   mention: { id: 'notification.mention', defaultMessage: '{name} mentioned you' },
   group: { id: 'notifications.group', defaultMessage: '{count} notifications' },
+  message_emoji_reaction: { id: 'notification.emoji_reaction', defaultMessage: '{name} reacted your post with emoji' },
 });
+
+export function updateEmojiReactions(emoji_reaction) {
+  return (dispatch) =>
+    dispatch({
+      type: STATUS_EMOJI_REACTION_UPDATE,
+      emoji_reaction,
+    });
+}
 
 export function updateNotifications(notification, intlMessages, intlLocale) {
   return (dispatch, getState) => {
