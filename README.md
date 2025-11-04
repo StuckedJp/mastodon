@@ -1,3 +1,8 @@
+このリポジトリ固有の機能については、[README.forked.md](README.forked.md) ファイルをご覧ください。
+
+See the [README.forked.md](README.forked.md) file for information about features specific to this repository.
+
+
 > [!NOTE]
 > Want to learn more about Mastodon?
 > Click below to find out more in a video.
