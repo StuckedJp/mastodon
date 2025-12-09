@@ -7,7 +7,7 @@ export const getStatusList = createSelector(
   [
     (
       state: RootState,
-      type: 'favourites' | 'bookmarks' | 'pins' | 'trending',
+      type: 'favourites' | 'bookmarks' | 'pins' | 'trending' | 'emoji_reactions',
     ) =>
       state.status_lists.getIn([type, 'items']) as ImmutableOrderedSet<string>,
   ],

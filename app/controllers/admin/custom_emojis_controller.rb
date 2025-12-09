@@ -45,7 +45,7 @@ module Admin
 
     def resource_params
       params
-        .expect(custom_emoji: [:shortcode, :image, :visible_in_picker])
+        .expect(custom_emoji: [:shortcode, :image, :category_id, :visible_in_picker, :aliases_raw, :license])
     end
 
     def filtered_custom_emojis

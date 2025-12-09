@@ -198,6 +198,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.datetime "requested_review_at", precision: nil
     t.boolean "indexable", default: false, null: false
     t.string "attribution_domains", default: [], array: true
+    t.jsonb "settings"
     t.string "following_url", default: "", null: false
     t.integer "id_scheme", default: 1
     t.index "(((setweight(to_tsvector('simple'::regconfig, (display_name)::text), 'A'::\"char\") || setweight(to_tsvector('simple'::regconfig, (username)::text), 'B'::\"char\")) || setweight(to_tsvector('simple'::regconfig, (COALESCE(domain, ''::character varying))::text), 'C'::\"char\")))", name: "search_index", using: :gin
@@ -389,6 +390,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.boolean "visible_in_picker", default: true, null: false
     t.bigint "category_id"
     t.integer "image_storage_schema_version"
+    t.integer "image_width"
+    t.integer "image_height"
+    t.jsonb "aliases"
+    t.boolean "is_sensitive", default: false, null: false
+    t.string "license"
     t.index ["shortcode", "domain"], name: "index_custom_emojis_on_shortcode_and_domain", unique: true
   end
 
@@ -448,6 +454,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.bigint "parent_id"
     t.boolean "allow_with_approval", default: false, null: false
     t.index ["domain"], name: "index_email_domain_blocks_on_domain", unique: true
+  end
+
+  create_table "emoji_reactions", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "status_id", null: false
+    t.string "name", default: "", null: false
+    t.bigint "custom_emoji_id"
+    t.string "uri"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["account_id"], name: "index_emoji_reactions_on_account_id"
+    t.index ["custom_emoji_id"], name: "index_emoji_reactions_on_custom_emoji_id"
+    t.index ["status_id"], name: "index_emoji_reactions_on_status_id"
+    t.index ["uri"], name: "index_emoji_reactions_on_uri", unique: true
   end
 
   create_table "fasp_backfill_requests", force: :cascade do |t|
@@ -1108,6 +1128,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "untrusted_favourites_count"
     t.bigint "untrusted_reblogs_count"
+    t.string "emoji_reactions"
+    t.integer "emoji_reactions_count", default: 0, null: false
+    t.integer "emoji_reaction_accounts_count", default: 0, null: false
     t.bigint "quotes_count", default: 0, null: false
     t.index ["status_id"], name: "index_status_stats_on_status_id", unique: true
   end
@@ -1393,6 +1416,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
   add_foreign_key "custom_filter_statuses", "statuses", on_delete: :cascade
   add_foreign_key "custom_filters", "accounts", on_delete: :cascade
   add_foreign_key "email_domain_blocks", "email_domain_blocks", column: "parent_id", on_delete: :cascade
+  add_foreign_key "emoji_reactions", "accounts", on_delete: :cascade
+  add_foreign_key "emoji_reactions", "custom_emojis", on_delete: :cascade
+  add_foreign_key "emoji_reactions", "statuses", on_delete: :cascade
   add_foreign_key "fasp_backfill_requests", "fasp_providers"
   add_foreign_key "fasp_debug_callbacks", "fasp_providers"
   add_foreign_key "fasp_follow_recommendations", "accounts", column: "recommended_account_id"

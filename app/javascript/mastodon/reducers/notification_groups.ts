@@ -228,6 +228,41 @@ function processNewNotification(
   if (existingGroupIndex > -1) {
     const existingGroup = groups[existingGroupIndex];
 
+    if (existingGroup && existingGroup.type !== 'gap') {
+      // Update emoji reaction emoji groups
+      if (existingGroup.type === 'emoji_reaction') {
+        const emojiReactionGroups = existingGroup.emojiReactionGroups;
+        const emojiReactionData = notification.emoji_reaction;
+
+        if (emojiReactionGroups && emojiReactionData) {
+          const sameEmojiIndex = emojiReactionGroups.findIndex(
+            (g) => g.emoji.name === emojiReactionData.name,
+          );
+
+          if (sameEmojiIndex > -1) {
+            const sameEmoji = emojiReactionGroups[sameEmojiIndex];
+
+            if (sameEmoji) {
+              if (
+                !sameEmoji.sampleAccountIds.includes(notification.account.id) &&
+                sameEmoji.sampleAccountIds.unshift(notification.account.id) >
+                  NOTIFICATIONS_GROUP_MAX_AVATARS
+              )
+                sameEmoji.sampleAccountIds.pop();
+
+              emojiReactionGroups.splice(sameEmojiIndex, 1);
+              emojiReactionGroups.unshift(sameEmoji);
+            }
+          } else {
+            emojiReactionGroups.unshift({
+              emoji: emojiReactionData,
+              sampleAccountIds: [notification.account.id],
+            });
+          }
+        }
+      }
+    }
+
     if (
       existingGroup &&
       existingGroup.type !== 'gap' &&

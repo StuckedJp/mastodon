@@ -23,8 +23,40 @@ module User::HasSettings
     settings['web.auto_play']
   end
 
+  def setting_reaction_deck
+    settings['reaction_deck']
+  end
+
+  def setting_hide_recent_emojis
+    settings['web.hide_recent_emojis']
+  end
+
+  def setting_enable_emoji_reaction
+    settings['web.enable_emoji_reaction']
+  end
+
+  def setting_show_emoji_reaction_on_timeline
+    settings['web.show_emoji_reaction_on_timeline']
+  end
+
   def setting_default_sensitive
     settings['default_sensitive']
+  end
+
+  def setting_stop_emoji_reaction_streaming
+    settings['stop_emoji_reaction_streaming']
+  end
+
+  def setting_emoji_reaction_streaming_notify_impl2
+    false
+  end
+
+  def setting_emoji_reaction_policy
+    settings['emoji_reaction_policy']
+  end
+
+  def setting_slip_local_emoji_reaction
+    settings['slip_local_emoji_reaction']
   end
 
   def setting_boost_modal
@@ -113,6 +145,14 @@ module User::HasSettings
 
   def setting_default_quote_policy
     settings['default_quote_policy'] || 'public'
+  end
+
+  def setting_hide_emoji_reaction_unavailable_server
+    settings['web.hide_emoji_reaction_unavailable_server']
+  end
+
+  def setting_hide_emoji_reaction_count
+    settings['web.hide_emoji_reaction_count']
   end
 
   def allows_report_emails?

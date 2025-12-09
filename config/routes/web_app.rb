@@ -11,6 +11,7 @@
   /deck/(*any)
   /directory
   /domain_blocks
+  /emoji_reactions
   /explore/(*any)
   /favourites
   /follow_requests
@@ -28,6 +29,7 @@
   /public/local
   /public/remote
   /publish
+  /reaction_deck
   /search
   /start/(*any)
   /statuses/(*any)

@@ -33,7 +33,7 @@ export type AnyEmojiData = CustomEmojiData | UnicodeEmojiData;
 
 type CustomEmojiRenderFields = Pick<
   CustomEmojiData,
-  'shortcode' | 'static_url' | 'url'
+  'shortcode' | 'static_url' | 'url' | 'width' | 'height'
 >;
 
 export interface EmojiStateUnicode {
@@ -47,7 +47,6 @@ export interface EmojiStateCustom {
   data?: CustomEmojiRenderFields;
 }
 export type EmojiState = EmojiStateUnicode | EmojiStateCustom;
-
 export type EmojiLoadedState =
   | Required<EmojiStateUnicode>
   | Required<EmojiStateCustom>;

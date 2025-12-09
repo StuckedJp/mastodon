@@ -37,6 +37,12 @@
   --input-placeholder-color: #{$dark-text-color};
   --input-background-color: var(--surface-variant-background-color);
   --on-input-color: #{$secondary-text-color};
+  --content-font-size: 15px;
+  --content-emoji-size: 30px;
+  --content-line-height: 22px;
+  --detail-content-font-size: 19px;
+  --detail-content-emoji-size: 34px;
+  --detail-content-line-height: 24px;
 }
 
 body {

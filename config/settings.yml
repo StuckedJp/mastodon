@@ -33,6 +33,11 @@ defaults: &defaults
   captcha_enabled: false
   allow_referrer_origin: false
   landing_page: 'trends'
+  receive_other_servers_emoji_reaction: true
+  streaming_other_servers_emoji_reaction: true
+  streaming_local_emoji_reaction: true
+  enable_emoji_reaction: true
+  emoji_reaction_disallow_domains: []
 
 development:
   <<: *defaults

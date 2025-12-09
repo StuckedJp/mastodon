@@ -12,6 +12,11 @@ export const CustomEmojiFactory = ImmutableRecord<CustomEmojiShape>({
   url: '',
   category: '',
   visible_in_picker: false,
+  width: 32,
+  height: 32,
+  sensitive: false,
+  aliases: [],
+  license: '',
 });
 
 export type EmojiMap = Record<string, ApiCustomEmojiJSON>;
@@ -21,7 +26,7 @@ export function makeEmojiMap(
 ) {
   if (isList(emojis)) {
     return emojis.reduce<EmojiMap>((obj, emoji) => {
-      obj[`:${emoji.shortcode}:`] = emoji.toJS();
+      obj[`:${emoji.shortcode}:`] = emoji.toJS() as ApiCustomEmojiJSON;
       return obj;
     }, {});
   } else

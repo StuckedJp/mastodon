@@ -24,6 +24,7 @@ class InitialStateSerializer < ActiveModel::Serializer
       store[:auto_play_gif]     = object_account_user.setting_auto_play_gif
       store[:display_media]     = object_account_user.setting_display_media
       store[:expand_spoilers]   = object_account_user.setting_expand_spoilers
+      store[:enable_emoji_reaction] = object_account_user.setting_enable_emoji_reaction && Setting.enable_emoji_reaction
       store[:reduce_motion]     = object_account_user.setting_reduce_motion
       store[:disable_swiping]   = object_account_user.setting_disable_swiping
       store[:disable_hover_cards] = object_account_user.setting_disable_hover_cards
@@ -32,11 +33,21 @@ class InitialStateSerializer < ActiveModel::Serializer
       store[:use_pending_items] = object_account_user.setting_use_pending_items
       store[:show_trends]       = Setting.trends && object_account_user.setting_trends
       store[:emoji_style]       = object_account_user.settings['web.emoji_style']
+      store[:hide_items]        = [
+        object_account_user.setting_hide_recent_emojis ? 'recent_emojis' : nil,
+        object_account_user.setting_hide_emoji_reaction_unavailable_server ? 'emoji_reaction_unavailable_server' : nil,
+        object_account_user.setting_hide_emoji_reaction_count ? 'emoji_reaction_count' : nil,
+        object_account_user.setting_show_emoji_reaction_on_timeline ? nil : 'emoji_reaction_on_timeline',
+      ].compact
     else
       store[:auto_play_gif] = Setting.auto_play_gif
       store[:display_media] = Setting.display_media
       store[:reduce_motion] = Setting.reduce_motion
       store[:use_blurhash]  = Setting.use_blurhash
+      store[:enable_emoji_reaction] = Setting.enable_emoji_reaction
+      store[:hide_items] = [
+        Setting.enable_emoji_reaction ? nil : 'emoji_reaction_on_timeline',
+      ].compact
     end
 
     store[:disabled_account_id] = object.disabled_account.id.to_s if object.disabled_account

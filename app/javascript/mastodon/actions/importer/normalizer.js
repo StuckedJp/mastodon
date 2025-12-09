@@ -1,6 +1,6 @@
 import escapeTextContentForBrowser from 'escape-html';
 
-import { expandSpoilers } from '../../initial_state';
+import { expandSpoilers, me } from '../../initial_state';
 
 const domParser = new DOMParser();
 
@@ -27,7 +27,7 @@ function stripQuoteFallback(text) {
   return wrapper.innerHTML;
 }
 
-export function normalizeStatus(status, normalOldStatus, { bogusQuotePolicy = false }) {
+export function normalizeStatus(status, normalOldStatus, { bogusQuotePolicy = false }, options = undefined) {
   const normalStatus   = { ...status };
 
   if (bogusQuotePolicy)
@@ -65,6 +65,14 @@ export function normalizeStatus(status, normalOldStatus, { bogusQuotePolicy = fa
     normalStatus.filtered = status.filtered.map(normalizeFilterResult);
   }
 
+  if (status.emoji_reactions) {
+    if (!options?.withoutEmojiReaction) {
+      normalStatus.emoji_reactions = normalizeEmojiReactions(status.emoji_reactions);
+    } else {
+      normalStatus.emoji_reactions = normalOldStatus?.get('emoji_reactions') ?? [];
+    }
+  }
+
   // Only calculate these values when status first encountered and
   // when the underlying values change. Otherwise keep the ones
   // already in the reducer
@@ -84,6 +92,10 @@ export function normalizeStatus(status, normalOldStatus, { bogusQuotePolicy = fa
     if (normalStatus.spoiler_text && !normalStatus.content && !normalStatus.quote) {
       normalStatus.content = normalStatus.spoiler_text;
       normalStatus.spoiler_text = '';
+    }
+
+    if (normalStatus.emojis && normalStatus.emojis.some((emoji) => emoji.is_sensitive) && !normalStatus.spoiler_text) {
+      normalStatus.spoiler_text = '[Contains sensitive custom emoji(s)]';
     }
 
     const spoilerText   = normalStatus.spoiler_text || '';
@@ -126,6 +138,17 @@ export function normalizeStatus(status, normalOldStatus, { bogusQuotePolicy = fa
   }
 
   return normalStatus;
+}
+
+export function normalizeEmojiReactions(emoji_reactions) {
+  const myAccountId = me;
+  let converted = [];
+  for (let emoji_reaction of emoji_reactions) {
+    let obj = emoji_reaction;
+    obj.me = obj.account_ids.some((id) => id === myAccountId);
+    converted.push(obj);
+  }
+  return converted;
 }
 
 export function normalizeStatusTranslation(translation, status) {

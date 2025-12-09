@@ -170,6 +170,18 @@ module Account::Interactions
     status.proper.favourites.exists?(account: self)
   end
 
+  def emoji_reacted?(status, shortcode = nil, domain = nil, domain_force: false)
+    if shortcode.present?
+      if domain.present? || domain_force
+        status.proper.emoji_reactions.joins(:custom_emoji).exists?(account: self, name: shortcode, custom_emoji: { domain: domain })
+      else
+        status.proper.emoji_reactions.exists?(account: self, name: shortcode)
+      end
+    else
+      status.proper.emoji_reactions.exists?(account: self)
+    end
+  end
+
   def bookmarked?(status)
     status.proper.bookmarks.exists?(account: self)
   end
