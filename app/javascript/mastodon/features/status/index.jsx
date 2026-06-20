@@ -41,6 +41,8 @@ import {
   unblockDomain,
 } from '../../actions/domain_blocks';
 import {
+  emojiReact,
+  unEmojiReact,
   toggleFavourite,
   bookmark,
   unbookmark,
@@ -188,6 +190,29 @@ class Status extends ImmutablePureComponent {
         },
       }));
     }
+  };
+
+  handleEmojiReact = (status, emoji) => {
+    const { dispatch } = this.props;
+    const { signedIn } = this.props.identity;
+
+    if (signedIn) {
+      dispatch(emojiReact(status, emoji));
+    } else {
+      dispatch(openModal({
+        modalType: 'INTERACTION',
+        modalProps: {
+          type: 'favourite',
+          accountId: status.getIn(['account', 'id']),
+          url: status.get('uri'),
+        },
+      }));
+    }
+  };
+
+  handleUnEmojiReact = (status, emoji) => {
+    const { dispatch } = this.props;
+    dispatch(unEmojiReact(status, emoji));
   };
 
   handlePin = (status) => {
@@ -637,6 +662,8 @@ class Status extends ImmutablePureComponent {
                   pictureInPicture={pictureInPicture}
                   ancestors={this.props.ancestorsIds.length}
                   multiColumn={multiColumn}
+                  onEmojiReact={this.handleEmojiReact}
+                  onUnEmojiReact={this.handleUnEmojiReact}
                 />
 
                 <ActionBar
@@ -644,6 +671,7 @@ class Status extends ImmutablePureComponent {
                   status={status}
                   onReply={this.handleReplyClick}
                   onFavourite={this.handleFavouriteClick}
+                  onEmojiReact={this.handleEmojiReact}
                   onReblog={this.handleReblogClick}
                   onBookmark={this.handleBookmarkClick}
                   onDelete={this.handleDeleteClick}
