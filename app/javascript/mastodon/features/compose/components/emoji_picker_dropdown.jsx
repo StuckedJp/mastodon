@@ -263,8 +263,8 @@ class EmojiPickerMenuImpl extends PureComponent {
     return (
       <div className={classNames('emoji-picker-dropdown__menu', { selecting: modifierOpen })} style={style} ref={this.setRef}>
         <EmojiPicker
-          perLine={8}
-          emojiSize={22}
+          perLine={5}
+          emojiSize={40}
           color=''
           emoji=''
           title={title}
@@ -363,7 +363,7 @@ class EmojiPickerDropdown extends PureComponent {
   };
 
   render() {
-    const { intl, onPickEmoji, onSkinTone, skinTone, frequentlyUsedEmojis, disabled } = this.props;
+    const { intl, onPickEmoji, onSkinTone, skinTone, frequentlyUsedEmojis, disabled, inverted } = this.props;
     const title = intl.formatMessage(messages.emoji);
     const { active, loading, placement } = this.state;
 
@@ -377,7 +377,7 @@ class EmojiPickerDropdown extends PureComponent {
           onClick={this.onToggle}
           disabled={disabled}
           id="emoji"
-          inverted
+          inverted={inverted}
         />
 
         <Overlay show={active} placement={placement} flip target={this.findTarget} popperConfig={{ strategy: 'fixed', onFirstUpdate: this.handleOverlayEnter }}>

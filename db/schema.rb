@@ -195,6 +195,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
     t.datetime "requested_review_at", precision: nil
     t.datetime "reviewed_at", precision: nil
     t.datetime "sensitized_at", precision: nil
+    t.jsonb "settings"
     t.string "shared_inbox_url", default: "", null: false
     t.boolean "show_featured", default: true, null: false
     t.boolean "show_media", default: true, null: false
@@ -433,6 +434,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
   end
 
   create_table "custom_emojis", force: :cascade do |t|
+    t.jsonb "aliases"
     t.bigint "category_id"
     t.datetime "created_at", precision: nil, null: false
     t.boolean "disabled", default: false, null: false
@@ -440,9 +442,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
     t.string "image_content_type"
     t.string "image_file_name"
     t.integer "image_file_size"
+    t.integer "image_height"
     t.string "image_remote_url"
     t.integer "image_storage_schema_version"
     t.datetime "image_updated_at", precision: nil
+    t.integer "image_width"
+    t.boolean "is_sensitive", default: false, null: false
+    t.string "license"
     t.string "shortcode", default: "", null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "uri"
@@ -518,6 +524,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
     t.datetime "updated_at", null: false
     t.index ["account_id", "email"], name: "index_email_subscriptions_on_account_id_and_email", unique: true
     t.index ["confirmation_token"], name: "index_email_subscriptions_on_confirmation_token", unique: true, where: "(confirmation_token IS NOT NULL)"
+  end
+
+  create_table "emoji_reactions", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.bigint "custom_emoji_id"
+    t.string "name", default: "", null: false
+    t.bigint "status_id", null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.string "uri"
+    t.index ["account_id"], name: "index_emoji_reactions_on_account_id"
+    t.index ["custom_emoji_id"], name: "index_emoji_reactions_on_custom_emoji_id"
+    t.index ["status_id"], name: "index_emoji_reactions_on_status_id"
+    t.index ["uri"], name: "index_emoji_reactions_on_uri", unique: true
   end
 
   create_table "fasp_backfill_requests", force: :cascade do |t|
@@ -1190,6 +1210,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
 
   create_table "status_stats", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
+    t.integer "emoji_reaction_accounts_count", default: 0, null: false
+    t.string "emoji_reactions"
+    t.integer "emoji_reactions_count", default: 0, null: false
     t.bigint "favourites_count", default: 0, null: false
     t.bigint "quotes_count", default: 0, null: false
     t.bigint "reblogs_count", default: 0, null: false
@@ -1505,6 +1528,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
   add_foreign_key "custom_filters", "accounts", on_delete: :cascade
   add_foreign_key "email_domain_blocks", "email_domain_blocks", column: "parent_id", on_delete: :cascade
   add_foreign_key "email_subscriptions", "accounts", on_delete: :cascade
+  add_foreign_key "emoji_reactions", "accounts", on_delete: :cascade
+  add_foreign_key "emoji_reactions", "custom_emojis", on_delete: :cascade
+  add_foreign_key "emoji_reactions", "statuses", on_delete: :cascade
   add_foreign_key "fasp_backfill_requests", "fasp_providers"
   add_foreign_key "fasp_debug_callbacks", "fasp_providers"
   add_foreign_key "fasp_follow_recommendations", "accounts", column: "recommended_account_id"

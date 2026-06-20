@@ -113,6 +113,10 @@
   --rich-text-container-color: rgb(87 24 60 / 100%);
   --rich-text-text-color: rgb(255 175 212 / 100%);
   --rich-text-decorations-color: rgb(128 58 95 / 100%);
+
+  /* EMOJI REACTIONS */
+  --emoji-reaction-color: #42485a;
+  --emoji-reaction-selected-color: #617ed5;
 }
 
 @mixin contrast-overrides {
@@ -126,4 +130,8 @@
 
   /* BORDER TOKENS */
   --color-border-primary: var(--color-grey-600);
+
+  /* EMOJI REACTIONS */
+  --emoji-reaction-color: #42485a;
+  --emoji-reaction-selected-color: #617ed5;
 }
