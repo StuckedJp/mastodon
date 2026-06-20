@@ -2,11 +2,12 @@
 
 class REST::V1::InstanceSerializer < ActiveModel::Serializer
   include RoutingHelper
+  include FullstuckCapabilitiesHelper
 
   attributes :uri, :title, :short_description, :description, :email,
              :version, :urls, :stats, :thumbnail,
              :languages, :registrations, :approval_required, :invites_enabled,
-             :configuration
+             :configuration, :fedibird_capabilities
 
   has_one :contact_account, serializer: REST::AccountSerializer
 
@@ -75,6 +76,20 @@ class REST::V1::InstanceSerializer < ActiveModel::Serializer
         min_expiration: PollExpirationValidator::MIN_EXPIRATION,
         max_expiration: PollExpirationValidator::MAX_EXPIRATION,
       },
+      emoji_reactions: {
+        max_reactions: EmojiReaction::EMOJI_REACTION_LIMIT,
+        max_reactions_per_account: EmojiReaction::EMOJI_REACTION_PER_ACCOUNT_LIMIT,
+        max_reactions_per_remote_account: EmojiReaction::EMOJI_REACTION_PER_REMOTE_ACCOUNT_LIMIT,
+      },
+
+      reaction_deck: {
+        max_emojis: User::REACTION_DECK_MAX,
+      },
+
+      reactions: {
+        max_reactions: EmojiReaction::EMOJI_REACTION_PER_ACCOUNT_LIMIT,
+      },
+
     }
   end
 
