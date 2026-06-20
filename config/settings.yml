@@ -37,6 +37,11 @@ defaults: &defaults
   opt_in_server_directory: false
   opt_in_server_recommendation: false
   wrapstodon: true
+  receive_other_servers_emoji_reaction: true
+  streaming_other_servers_emoji_reaction: true
+  streaming_local_emoji_reaction: true
+  enable_emoji_reaction: true
+  emoji_reaction_disallow_domains: []
 
 development:
   <<: *defaults
