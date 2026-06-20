@@ -20,7 +20,7 @@ import Card from '@/mastodon/features/status/components/card';
 import Bundle from '@/mastodon/features/ui/components/bundle';
 import { MediaGallery, Video, Audio } from '@/mastodon/features/ui/util/async-components';
 import { SensitiveMediaContext } from '@/mastodon/features/ui/util/sensitive_media_context';
-import { displayMedia } from '@/mastodon/initial_state';
+import { displayMedia, enableEmojiReaction, isShowItem, isHideItem } from '@/mastodon/initial_state';
 import { CollectionPreviewCard } from '@/mastodon/features/collections/components/collection_preview_card';
 import { compareUrls } from '@/mastodon/utils/compare_urls';
 import { FOCUS_TARGET } from '@/mastodon/components/navigation_focus_target';
@@ -33,6 +33,7 @@ import { StatusHeader } from './header'
 import { getHashtagBarForStatus } from './hashtag_bar';
 import StatusActionBar from './action_bar';
 import StatusContent from './content';
+import StatusEmojiReactionsBar from '@/mastodon/components/status_emoji_reactions_bar';
 import { StatusThreadLabel } from './thread_label';
 
 const domParser = new DOMParser();
@@ -94,6 +95,8 @@ class Status extends ImmutablePureComponent {
     onClick: PropTypes.func,
     onReply: PropTypes.func,
     onFavourite: PropTypes.func,
+    onEmojiReact: PropTypes.func,
+    onUnEmojiReact: PropTypes.func,
     onReblog: PropTypes.func,
     onQuote: PropTypes.func,
     onDelete: PropTypes.func,
@@ -133,6 +136,8 @@ class Status extends ImmutablePureComponent {
       available: PropTypes.bool,
     }),
     contextType: PropTypes.string,
+    withoutEmojiReactions: PropTypes.bool,
+    myEmojiReactionsOnly: PropTypes.bool,
     ...WithOptionalRouterPropTypes,
   };
 
@@ -577,6 +582,15 @@ class Status extends ImmutablePureComponent {
       }
     }
 
+    let emojiReactionsBar = null;
+    if (!this.props.withoutEmojiReactions && status.get('emoji_reactions')) {
+      const emojiReactions = status.get('emoji_reactions');
+      const emojiReactionAvailableServer = !isHideItem('emoji_reaction_unavailable_server') || status.getIn(['account', 'server_features', 'emoji_reaction']);
+      if (emojiReactions.size > 0 && enableEmojiReaction && emojiReactionAvailableServer) {
+        emojiReactionsBar = <StatusEmojiReactionsBar emojiReactions={emojiReactions} myReactionOnly={this.props.myEmojiReactionsOnly || !isShowItem('emoji_reaction_on_timeline')} status={status} onEmojiReact={this.props.onEmojiReact} onUnEmojiReact={this.props.onUnEmojiReact} />;
+      }
+    }
+
     const {statusContentProps, hashtagBar} = getHashtagBarForStatus(status);
 
     const header = this.props.headerRenderFn
@@ -630,6 +644,7 @@ class Status extends ImmutablePureComponent {
 
                 {media}
                 {hashtagBar}
+                {!isQuotedPost && emojiReactionsBar}
 
                 {children}
               </>

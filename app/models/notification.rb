@@ -29,6 +29,7 @@ class Notification < ApplicationRecord
     'Follow' => :follow,
     'FollowRequest' => :follow_request,
     'Favourite' => :favourite,
+    'EmojiReaction' => :emoji_reaction,
     'Poll' => :poll,
     'Quote' => :quote,
   }.freeze
@@ -58,6 +59,12 @@ class Notification < ApplicationRecord
     favourite: {
       filterable: true,
       baseline: true,
+    }.freeze,
+    emoji_reaction: {
+      filterable: true,
+    }.freeze,
+    reaction: {
+      filterable: true,
     }.freeze,
     poll: {
       filterable: false,
@@ -113,6 +120,8 @@ class Notification < ApplicationRecord
     mention: [mention: :status],
     quote: [quote: :status],
     favourite: [favourite: :status],
+    emoji_reaction: [emoji_reaction: :status],
+    reaction: [emoji_reaction: :status],
     poll: [poll: :status],
     update: :status,
     quoted_update: :status,
@@ -129,6 +138,7 @@ class Notification < ApplicationRecord
     belongs_to :follow, inverse_of: :notification
     belongs_to :follow_request, inverse_of: :notification
     belongs_to :favourite, inverse_of: :notification
+    belongs_to :emoji_reaction, inverse_of: :notification
     belongs_to :poll, inverse_of: false
     belongs_to :report, inverse_of: false
     belongs_to :account_relationship_severance_event, inverse_of: false
@@ -155,6 +165,8 @@ class Notification < ApplicationRecord
       status&.reblog
     when :favourite
       favourite&.status
+    when :emoji_reaction, :reaction
+      emoji_reaction&.status
     when :mention
       mention&.status
     when :quote
@@ -216,6 +228,8 @@ class Notification < ApplicationRecord
           notification.status.reblog = cached_status
         when :favourite
           notification.favourite.status = cached_status
+        when :emoji_reaction, :reaction
+          notification.emoji_reaction.status = cached_status
         when :mention
           notification.mention.status = cached_status
         when :poll
@@ -242,7 +256,7 @@ class Notification < ApplicationRecord
     case activity_type
     when 'Status'
       self.from_account_id = type == :quoted_update ? activity&.quote&.quoted_account_id : activity&.account_id
-    when 'Follow', 'Favourite', 'FollowRequest', 'Poll', 'Report', 'Quote', 'Collection'
+    when 'Follow', 'Favourite', 'FollowRequest', 'Poll', 'Report', 'Quote', 'Collection', 'EmojiReaction', 'EmojiReact'
       self.from_account_id = activity&.account_id
     when 'CollectionItem'
       self.from_account_id = activity&.collection&.account_id
