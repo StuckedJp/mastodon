@@ -822,6 +822,7 @@ ja:
         desc_html: この設定を自分で変更していない全ユーザーに影響します
         title: デフォルトで検索エンジンによるインデックスを拒否する
       discovery:
+        emoji_reactions: 絵文字リアクション
         follow_recommendations: おすすめフォロー
         preamble: 必ずしも知っている人がMastodonに居ない新規ユーザーに定着してもらうには、興味深いコンテンツを表示することが役に立ちます。あなたのサーバーの種々のディスカバリー機能の動作を設定してください。
         privacy: プライバシー
@@ -1170,6 +1171,7 @@ ja:
     animations_and_accessibility: アニメーションとアクセシビリティー
     boosting_preferences: ブースト設定
     boosting_preferences_info_html: "<strong>Tip:</strong> 設定に関係なく、<kbd>Shift</kbd> を押しながら %{icon} Boostアイコンを<kbd>クリック</kbd>すると、すぐにブーストされます。"
+    custom_emoji_and_emoji_reactions: カスタム絵文字と絵文字リアクション
     discovery: 見つける
     localization:
       body: Mastodonは有志によって翻訳されています。
@@ -1620,6 +1622,10 @@ ja:
         subject: "%{name}さんがレポートを送信しました"
       sign_up:
         subject: "%{name}さんがサインアップしました"
+    emoji_reaction:
+      body: "%{name}さんに絵文字をつけられた、あなたの投稿があります:"
+      subject: "%{name}さんに絵文字をつけられました"
+      title: 新たな絵文字リアクション
     favourite:
       body: "%{name}さんにお気に入り登録された、あなたの投稿があります:"
       subject: "%{name}さんにお気に入りに登録されました"
@@ -1707,6 +1713,9 @@ ja:
     title: プライバシーポリシー
   reactions:
     errors:
+      banned: 指定ユーザーからのリアクションは禁止されています
+      disabled: このサーバーでは絵文字リアクション機能は無効になっています
+      duplication: 同じリアクションを複数行おうとしました
       limit_reached: リアクションの種類が上限に達しました
       unrecognized_emoji: は絵文字として認識されていません
   redirects:
