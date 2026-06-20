@@ -11,7 +11,7 @@ import { selectIsAccountLocal, selectPlainAccount } from './accounts';
 
 export const getStatusList = createAppSelector(
   [
-    (state, type: 'favourites' | 'bookmarks' | 'pins' | 'trending') =>
+    (state, type: 'favourites' | 'bookmarks' | 'pins' | 'trending' | 'emoji_reactions') =>
       state.status_lists.getIn([type, 'items']) as ImmutableOrderedSet<string>,
   ],
   (items) => items.toList(),

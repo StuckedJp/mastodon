@@ -10,6 +10,7 @@ class NotifyService < BaseService
     update
     quoted_update
     poll
+    emoji_reaction
     status
     moderation_warning
     severed_relationships
