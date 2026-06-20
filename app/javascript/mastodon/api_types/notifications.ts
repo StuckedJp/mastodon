@@ -4,6 +4,7 @@ import type { AccountWarningAction } from 'mastodon/models/notification_group';
 
 import type { ApiAccountJSON } from './accounts';
 import type { ApiCollectionJSON } from './collections';
+import type { ApiListJSON } from './lists';
 import type { ApiReportJSON } from './reports';
 import type { ApiStatusJSON } from './statuses';
 
@@ -12,6 +13,7 @@ export const allNotificationTypes: NotificationType[] = [
   'follow',
   'follow_request',
   'favourite',
+  'emoji_reaction',
   'reblog',
   'mention',
   'quote',
@@ -29,6 +31,7 @@ export const allNotificationTypes: NotificationType[] = [
 
 export type NotificationWithStatusType =
   | 'favourite'
+  | 'emoji_reaction'
   | 'reblog'
   | 'status'
   | 'mention'
@@ -49,12 +52,30 @@ export type NotificationType =
   | 'added_to_collection'
   | 'collection_update';
 
+export interface NotifyEmojiReactionJSON {
+  name: string;
+  count: number;
+  me: boolean;
+  url?: string;
+  static_url?: string;
+  domain?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface NotificationEmojiReactionGroupJSON {
+  emoji_reaction: NotifyEmojiReactionJSON;
+  sample_account_ids: string[];
+}
+
 export interface BaseNotificationJSON {
   id: string;
   type: NotificationType;
   created_at: string;
   group_key: string;
   account: ApiAccountJSON;
+  emoji_reaction?: NotifyEmojiReactionJSON;
+  list?: ApiListJSON;
 }
 
 export interface BaseNotificationGroupJSON {
@@ -66,6 +87,7 @@ export interface BaseNotificationGroupJSON {
   most_recent_notification_id: string;
   page_min_id?: string;
   page_max_id?: string;
+  emoji_reaction_groups?: NotificationEmojiReactionGroupJSON[];
 }
 
 interface NotificationGroupWithStatusJSON extends BaseNotificationGroupJSON {
@@ -76,6 +98,7 @@ interface NotificationGroupWithStatusJSON extends BaseNotificationGroupJSON {
 interface NotificationWithStatusJSON extends BaseNotificationJSON {
   type: NotificationWithStatusType;
   status: ApiStatusJSON | null;
+  emoji_reaction?: NotifyEmojiReactionJSON;
 }
 
 interface ReportNotificationGroupJSON extends BaseNotificationGroupJSON {
