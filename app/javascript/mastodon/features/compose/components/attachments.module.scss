@@ -12,8 +12,8 @@
 .mediaGrid {
   display: grid;
   gap: var(--space-half);
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
   aspect-ratio: 3/2;
 
   &[data-number='2'] {
@@ -22,6 +22,41 @@
 
   &[data-number='3'] .mediaUpload:first-child {
     grid-row: span 2;
+  }
+
+  &[data-number='5'],
+  &[data-number='6'] {
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+
+  &[data-number='5'] .mediaUpload:last-child,
+  &[data-number='7'] .mediaUpload:last-child {
+    grid-column: span 2;
+  }
+
+  &[data-number='7'],
+  &[data-number='8'] {
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+  }
+
+  &[data-number='9'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+
+  &[data-number='10'],
+  &[data-number='11'],
+  &[data-number='12'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+
+  &[data-number='13'],
+  &[data-number='14'],
+  &[data-number='15'],
+  &[data-number='16'] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(0, 1fr));
   }
 }
 

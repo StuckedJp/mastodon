@@ -68,12 +68,14 @@ export const EmojiPickerButton: React.FC<{
   placement?: Placement;
   className?: string;
   size?: React.ComponentProps<typeof IconButton>['size'];
+  variant?: React.ComponentProps<typeof IconButton>['variant'];
 }> = ({
   onPick,
   disabled,
   placement = 'top-start',
   className,
   size = 'sm',
+  variant,
 }) => {
   const [open, { onToggle, onFalse }] = useToggle();
   const [target, setTarget] = useState<HTMLButtonElement | null>(null);
@@ -82,6 +84,7 @@ export const EmojiPickerButton: React.FC<{
     <>
       <IconButton
         size={size}
+        variant={variant}
         icon={SmileyIcon}
         ref={setTarget}
         onClick={onToggle}
@@ -229,7 +232,7 @@ export const EmojiDropdown: React.FC<
       >
         <EmojiPicker
           perLine={PER_LINE}
-          emojiSize={22}
+          emojiSize={40}
           color=''
           emoji=''
           title={intl.formatMessage(messages.emoji)}

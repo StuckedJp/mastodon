@@ -46,6 +46,7 @@
 #  requested_review_at           :datetime
 #  reviewed_at                   :datetime
 #  sensitized_at                 :datetime
+#  settings                      :jsonb
 #  shared_inbox_url              :string           default(""), not null
 #  show_featured                 :boolean          default(TRUE), not null
 #  show_media                    :boolean          default(TRUE), not null
@@ -111,6 +112,7 @@ class Account < ApplicationRecord
   include Account::Sensitizes
   include Account::Silences
   include Account::StatusesSearch
+  include Account::OtherSettings
   include Account::Suspensions
   include Account::AttributionDomains
   include DomainMaterializable
