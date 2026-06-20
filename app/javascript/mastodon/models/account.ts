@@ -6,7 +6,9 @@ import escapeTextContentForBrowser from 'escape-html';
 import type {
   ApiAccountFieldJSON,
   ApiAccountRoleJSON,
+  ApiAccountOtherSettingsJSON,
   ApiAccountJSON,
+  ApiServerFeaturesJSON,
 } from 'mastodon/api_types/accounts';
 import { unescapeHTML } from 'mastodon/utils/html';
 
@@ -40,6 +42,34 @@ const AccountRoleFactory = ImmutableRecord<AccountRoleShape>({
   id: '',
   name: '',
 });
+
+// AccountOtherSettings
+export type AccountOtherSettingsShape = ApiAccountOtherSettingsJSON;
+export type AccountOtherSettings = RecordOf<AccountOtherSettingsShape>;
+
+const AccountOtherSettingsFactory = ImmutableRecord<AccountOtherSettingsShape>({
+  noindex: false,
+  hide_network: false,
+  hide_followers_count: false,
+  hide_following_count: false,
+  hide_statuses_count: false,
+  translatable_private: false,
+  link_preview: true,
+  emoji_reaction_policy: 'allow',
+  subscription_policy: 'allow',
+});
+
+// ServerFeatures
+export type AccountServerFeaturesShape = ApiServerFeaturesJSON;
+export type AccountServerFeatures = RecordOf<AccountServerFeaturesShape>;
+
+const AccountServerFeaturesFactory =
+  ImmutableRecord<AccountServerFeaturesShape>({
+    circle: false,
+    emoji_reaction: false,
+    status_reference: false,
+    legacy_quote: false,
+  });
 
 // Account
 export interface AccountShape extends Required<
@@ -77,6 +107,7 @@ export const accountDefaultValues: AccountShape = {
   indexable: false,
   display_name: '',
   display_name_html: '',
+  server_features: AccountServerFeaturesFactory(),
   emojis: ImmutableList<CustomEmoji>(),
   feature_approval: {
     automatic: [],
@@ -113,6 +144,7 @@ export const accountDefaultValues: AccountShape = {
   hide_collections: false,
   email_subscriptions: false,
   invalid_handle: false,
+  other_settings: AccountOtherSettingsFactory(),
   // This comes from `ApiMutedAccountJSON`, but we should eventually
   // store that in a different object.
   mute_expires_at: null,

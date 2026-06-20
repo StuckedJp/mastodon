@@ -7,6 +7,8 @@ import type {
   ApiNotificationJSON,
   NotificationType,
   NotificationWithStatusType,
+  NotificationEmojiReactionGroupJSON,
+  NotifyEmojiReactionJSON,
 } from 'mastodon/api_types/notifications';
 import type { ApiReportJSON } from 'mastodon/api_types/reports';
 
@@ -29,6 +31,23 @@ interface BaseNotificationWithStatus<
 > extends BaseNotificationGroup {
   type: Type;
   statusId: string | undefined;
+  emojiReactionGroups?: EmojiReactionGroup[];
+}
+
+interface EmojiInfo {
+  name: string;
+  count: number;
+  me: boolean;
+  url?: string;
+  static_url?: string;
+  domain?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface EmojiReactionGroup {
+  emoji: EmojiInfo;
+  sampleAccountIds: string[];
 }
 
 interface BaseNotification<
@@ -39,6 +58,8 @@ interface BaseNotification<
 
 export type NotificationGroupFavourite =
   BaseNotificationWithStatus<'favourite'>;
+export type NotificationGroupEmojiReaction =
+  BaseNotificationWithStatus<'emoji_reaction'>;
 export type NotificationGroupReblog = BaseNotificationWithStatus<'reblog'>;
 export type NotificationGroupStatus = BaseNotificationWithStatus<'status'>;
 export type NotificationGroupMention = BaseNotificationWithStatus<'mention'>;
@@ -100,6 +121,7 @@ export interface NotificationGroupCollectionUpdate extends BaseNotification<'col
 
 export type NotificationGroup =
   | NotificationGroupFavourite
+  | NotificationGroupEmojiReaction
   | NotificationGroupReblog
   | NotificationGroupStatus
   | NotificationGroupMention
@@ -141,6 +163,20 @@ function createAccountRelationshipSeveranceEventFromJSON(
   return eventJson;
 }
 
+function createEmojiReactionGroupsFromJSON(
+  json: NotifyEmojiReactionJSON | undefined,
+  sampleAccountIds: string[],
+): EmojiReactionGroup[] {
+  if (typeof json === 'undefined') return [];
+
+  return [
+    {
+      emoji: json,
+      sampleAccountIds,
+    },
+  ];
+}
+
 function createAnnualReportEventFromJSON(
   eventJson: ApiAnnualReportEventJSON,
 ): AnnualReportEvent {
@@ -165,6 +201,30 @@ export function createNotificationGroupFromJSON(
       return {
         statusId: statusId ?? undefined,
         sampleAccountIds,
+        partial: false,
+        ...groupWithoutStatus,
+      };
+    }
+    case 'emoji_reaction': {
+      const {
+        status_id: statusId,
+        emoji_reaction_groups: emojiReactionGroups,
+        ...groupWithoutStatus
+      } = group;
+      const groups = (
+        typeof emojiReactionGroups === 'undefined'
+          ? ([] as NotificationEmojiReactionGroupJSON[])
+          : emojiReactionGroups
+      ).map((g) => {
+        return {
+          sampleAccountIds: g.sample_account_ids,
+          emoji: g.emoji_reaction,
+        } as EmojiReactionGroup;
+      });
+      return {
+        statusId: statusId ?? undefined,
+        sampleAccountIds,
+        emojiReactionGroups: groups,
         partial: false,
         ...groupWithoutStatus,
       };
@@ -239,6 +299,16 @@ export function createNotificationGroupFromNotificationJSON(
         ...group,
         type: notification.type,
         statusId: notification.status?.id,
+      };
+    case 'emoji_reaction':
+      return {
+        ...group,
+        type: notification.type,
+        statusId: notification.status?.id,
+        emojiReactionGroups: createEmojiReactionGroupsFromJSON(
+          notification.emoji_reaction,
+          group.sampleAccountIds,
+        ),
       };
     case 'admin.report':
       return {

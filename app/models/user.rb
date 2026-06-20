@@ -59,6 +59,8 @@ class User < ApplicationRecord
   include User::PamAuthenticable
   include User::SignInToken
 
+  REACTION_DECK_MAX = 256
+
   devise :two_factor_authenticatable,
          otp_secret_length: 32
 

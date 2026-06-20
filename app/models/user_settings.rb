@@ -20,6 +20,11 @@ class UserSettings
   setting :email_subscriptions, default: false
   setting :display_own_boosts, default: false
   setting :display_own_posts, default: true
+  setting :reaction_deck, default: nil
+  setting :stop_emoji_reaction_streaming, default: false
+  setting :emoji_reaction_streaming_notify_impl2, default: false
+  setting :emoji_reaction_policy, default: :allow, in: %w(allow outside_only followers_only following_only mutuals_only block)
+  setting :slip_local_emoji_reaction, default: false
 
   setting_inverse_alias :indexable, :noindex
 
@@ -33,6 +38,9 @@ class UserSettings
     setting :disable_swiping, default: false
     setting :disable_hover_cards, default: false
     setting :delete_modal, default: true
+    setting :hide_recent_emojis, default: false
+    setting :enable_emoji_reaction, default: true
+    setting :show_emoji_reaction_on_timeline, default: true
     setting :reblog_modal, default: false
     setting :quick_boosting, default: false
     setting :missing_alt_text_modal, default: true
@@ -43,6 +51,11 @@ class UserSettings
     setting :emoji_style, default: 'auto', in: %w(auto native twemoji)
     setting :color_scheme, default: 'auto', in: %w(auto light dark)
     setting :contrast, default: 'auto', in: %w(auto high)
+    setting :hide_emoji_reaction_unavailable_server, default: false
+    setting :hide_emoji_reaction_count, default: false
+
+    setting_inverse_alias :'web.show_emoji_reaction_count', :'web.hide_emoji_reaction_count'
+    setting_inverse_alias :'web.show_recent_emojis', :'web.hide_recent_emojis'
   end
 
   namespace :notification_emails do

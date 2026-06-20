@@ -64,8 +64,8 @@ export function importFetchedStatuses(statuses, options = {}) {
     const filters = [];
     const collections = [];
 
-    function processStatus(status) {
-      pushUnique(normalStatuses, normalizeStatus(status, getState().getIn(['statuses', status.id]), options));
+    function processStatus(status, options2 = undefined) {
+      pushUnique(normalStatuses, normalizeStatus(status, getState().getIn(['statuses', status.id]), options, options2));
       pushUnique(accounts, status.account);
 
       if (status.filtered) {
@@ -77,7 +77,7 @@ export function importFetchedStatuses(statuses, options = {}) {
       }
 
       if (status.quote?.quoted_status) {
-        processStatus(status.quote.quoted_status);
+        processStatus(status.quote.quoted_status, { withoutEmojiReaction: true });
       }
 
       if (status.poll?.id) {
