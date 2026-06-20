@@ -115,6 +115,10 @@
   --rich-text-container-color: rgb(255 216 231 / 100%);
   --rich-text-text-color: rgb(114 47 83 / 100%);
   --rich-text-decorations-color: rgb(255 175 212 / 100%);
+
+  /* EMOJI REACTIONS */
+  --emoji-reaction-color: #dfe5f5;
+  --emoji-reaction-selected-color: #9ac1f2;
 }
 
 @mixin contrast-overrides {
