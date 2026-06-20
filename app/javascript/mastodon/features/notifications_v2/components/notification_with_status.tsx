@@ -118,6 +118,7 @@ export const NotificationWithStatus: React.FC<{
           skipPrepend
           avatarSize={40}
           unfocusable
+          myEmojiReactionsOnly
         />
       </div>
     </Hotkeys>
