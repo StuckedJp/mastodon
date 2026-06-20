@@ -13,7 +13,7 @@ import type {
 } from 'mastodon/api_types/notifications';
 import { allNotificationTypes } from 'mastodon/api_types/notifications';
 import type { ApiStatusJSON } from 'mastodon/api_types/statuses';
-import { usePendingItems } from 'mastodon/initial_state';
+import { enableEmojiReaction, usePendingItems } from 'mastodon/initial_state';
 import type { NotificationGap } from 'mastodon/reducers/notification_groups';
 import {
   selectSettingsNotificationsExcludedTypes,
@@ -62,9 +62,14 @@ function excludeAllTypesExcept(filter: string) {
 function getExcludedTypes(state: RootState) {
   const activeFilter = selectSettingsNotificationsQuickFilterActive(state);
 
-  return activeFilter === 'all'
+  const types = activeFilter === 'all'
     ? selectSettingsNotificationsExcludedTypes(state)
     : excludeAllTypesExcept(activeFilter);
+  if (!enableEmojiReaction && !types.includes('emoji_reaction')) {
+    types.push('emoji_reaction');
+  }
+
+  return types;
 }
 
 function dispatchAssociatedRecords(
@@ -104,7 +109,7 @@ function dispatchAssociatedRecords(
 }
 
 function selectNotificationGroupedTypes(state: RootState) {
-  const types: NotificationType[] = ['favourite', 'reblog'];
+  const types: NotificationType[] = ['favourite', 'reblog', 'emoji_reaction'];
 
   if (selectSettingsNotificationsGroupFollows(state)) types.push('follow');
 
