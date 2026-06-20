@@ -22,8 +22,7 @@ import { isTruthy, normalizeHashtag, firstParam } from './utils.js';
 const environment = process.env.NODE_ENV || 'development';
 const PERMISSION_VIEW_FEEDS = 0x0000000000100000;
 
-// Correctly detect and load .env or .env.production file based on environment:
-const dotenvFile = environment === 'production' ? '.env.production' : '.env';
+const dotenvFile = environment  ? `.env.${environment}` : '.env';
 const dotenvFilePath = path.resolve(
   url.fileURLToPath(
     new URL(path.join('..', dotenvFile), import.meta.url)

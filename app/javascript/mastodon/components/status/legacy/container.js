@@ -18,6 +18,8 @@ import {
   initAddFilter,
 } from '@/mastodon/actions/filters';
 import {
+  emojiReact,
+  unEmojiReact,
   toggleReblog,
   toggleFavourite,
   bookmark,
@@ -75,6 +77,14 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
 
   onFavourite (status) {
     dispatch(toggleFavourite(status.get('id')));
+  },
+
+  onEmojiReact (status, emoji) {
+    dispatch(emojiReact(status, emoji));
+  },
+
+  onUnEmojiReact (status, emoji) {
+    dispatch(unEmojiReact(status, emoji));
   },
 
   onBookmark (status) {
