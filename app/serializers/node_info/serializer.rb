@@ -2,6 +2,7 @@
 
 class NodeInfo::Serializer < ActiveModel::Serializer
   include RoutingHelper
+  include FullstuckCapabilitiesHelper
 
   attributes :version, :software, :protocols, :services, :usage, :open_registrations, :metadata
 

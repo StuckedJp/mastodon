@@ -53,6 +53,7 @@ class Importer::StatusesIndexImporter < Importer::BaseImporter
       local_statuses_scope,
       local_mentions_scope,
       local_favourites_scope,
+      local_emoji_reacted_scope,
       local_votes_scope,
       local_bookmarks_scope,
     ]
@@ -64,6 +65,10 @@ class Importer::StatusesIndexImporter < Importer::BaseImporter
 
   def local_favourites_scope
     Favourite.where(account: Account.local).select(:id, :status_id)
+  end
+
+  def local_emoji_reacted_scope
+    EmojiReaction.where(account: Account.local).select(:id, :status_id)
   end
 
   def local_bookmarks_scope

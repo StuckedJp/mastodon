@@ -118,12 +118,20 @@ export function Quotes () {
   return import('../../quotes');
 }
 
+export function EmojiReactions () {
+  return import('../../emoji_reactions');
+}
+
 export function FollowRequests () {
   return import('../../follow_requests');
 }
 
 export function FavouritedStatuses () {
   return import('../../favourited_statuses');
+}
+
+export function EmojiReactedStatuses () {
+  return import('../../emoji_reacted_statuses');
 }
 
 export function FollowedTags () {
@@ -205,6 +213,10 @@ export function OnboardingProfile () {
 
 export function OnboardingFollows () {
   return import('../../onboarding/follows');
+}
+
+export function ReactionDeck () {
+  return import('../../reaction_deck');
 }
 
 export function CompareHistoryModal () {
