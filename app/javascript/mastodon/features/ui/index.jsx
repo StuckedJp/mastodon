@@ -52,6 +52,7 @@ import {
   Following,
   Reblogs,
   Favourites,
+  EmojiReactions,
   DirectTimeline,
   HashtagTimeline,
   Notifications,
@@ -59,6 +60,7 @@ import {
   NotificationRequest,
   FollowRequests,
   FavouritedStatuses,
+  EmojiReactedStatuses,
   BookmarkedStatuses,
   FollowedTags,
   LinkTimeline,
@@ -79,6 +81,7 @@ import {
   Search,
   About,
   PrivacyPolicy,
+  ReactionDeck,
   TermsOfService,
   AccountFeatured,
   AccountEdit,
@@ -234,9 +237,11 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/notifications/requests' component={NotificationRequests} content={children} exact />
             <WrappedRoute path='/notifications/requests/:id' component={NotificationRequest} content={children} exact />
             <WrappedRoute path='/favourites' component={FavouritedStatuses} content={children} />
+            <WrappedRoute path='/emoji_reactions' component={EmojiReactedStatuses} content={children} />
 
             <WrappedRoute path='/bookmarks' component={BookmarkedStatuses} content={children} />
 
+            <WrappedRoute path='/reaction_deck' component={ReactionDeck} content={children} />
             <WrappedRoute path='/start/profile' exact component={OnboardingProfile} content={children} />
             <WrappedRoute path={['/start', '/start/follows']} exact component={OnboardingFollows} content={children} />
             <WrappedRoute path='/directory' component={Directory} content={children} />
@@ -261,6 +266,7 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/@:acct/:statusId/reblogs' component={Reblogs} content={children} />
             <WrappedRoute path='/@:acct/:statusId/favourites' component={Favourites} content={children} />
             <WrappedRoute path='/@:acct/:statusId/quotes' component={Quotes} content={children} />
+            <WrappedRoute path='/@:acct/:statusId/emoji_reactions' component={EmojiReactions} content={children} />
 
             {/* Legacy routes, cannot be easily factored with other routes because they share a param name */}
             <WrappedRoute path='/timelines/tag/:id' component={HashtagTimeline} content={children} />
@@ -268,6 +274,7 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/statuses/:statusId' exact component={Status} content={children} />
             <WrappedRoute path='/statuses/:statusId/reblogs' component={Reblogs} content={children} />
             <WrappedRoute path='/statuses/:statusId/favourites' component={Favourites} content={children} />
+            <WrappedRoute path='/statuses/:statusId/emoji_reactions' component={EmojiReactions} content={children} />
 
             <WrappedRoute path='/follow_requests' component={FollowRequests} content={children} />
             <WrappedRoute path='/blocks' component={Blocks} content={children} />
@@ -595,6 +602,10 @@ class UI extends PureComponent {
     this.props.history.push('/favourites');
   };
 
+  handleHotkeyGoToEmojiReactions = () => {
+    this.props.history.push('/emoji_reactions');
+  };
+
   handleHotkeyGoToProfile = () => {
     this.props.history.push(`/@${this.props.username}`);
   };
@@ -635,6 +646,7 @@ class UI extends PureComponent {
       goToDirect: this.handleHotkeyGoToDirect,
       goToStart: this.handleHotkeyGoToStart,
       goToFavourites: this.handleHotkeyGoToFavourites,
+      goToEmojiReactions: this.handleHotkeyGoToEmojiReactions,
       goToProfile: this.handleHotkeyGoToProfile,
       goToBlocked: this.handleHotkeyGoToBlocked,
       goToMuted: this.handleHotkeyGoToMuted,

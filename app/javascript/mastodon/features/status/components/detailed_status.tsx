@@ -26,6 +26,7 @@ import { IconLogo } from 'mastodon/components/logo';
 import MediaGallery from 'mastodon/components/media_gallery';
 import { PictureInPicturePlaceholder } from 'mastodon/components/picture_in_picture_placeholder';
 import StatusContent from 'mastodon/components/status_content';
+import StatusEmojiReactionsBar from 'mastodon/components/status_emoji_reactions_bar';
 import { QuotedStatus } from 'mastodon/components/status_quoted';
 import { VisibilityIcon } from 'mastodon/components/visibility_icon';
 import { Audio } from 'mastodon/features/audio';
@@ -35,6 +36,7 @@ import { Video } from 'mastodon/features/video';
 import { useIdentity } from 'mastodon/identity_context';
 import type { CollectionAttachment } from 'mastodon/models/status';
 import { compareUrls } from 'mastodon/utils/compare_urls';
+import { enableEmojiReaction, isHideItem } from 'mastodon/initial_state';
 
 import Card from './card';
 
@@ -60,6 +62,9 @@ export const DetailedStatus: React.FC<{
   onToggleMediaVisibility?: () => void;
   ancestors?: number;
   multiColumn?: boolean;
+  onEmojiReact?: (status: any, name: string) => void;
+  onUnEmojiReact?: (status: any, name: string) => void;
+  muted?: boolean;
 }> = ({
   status,
   onOpenMedia,
@@ -76,6 +81,8 @@ export const DetailedStatus: React.FC<{
   onToggleHidden,
   ancestors = 0,
   multiColumn = false,
+  onEmojiReact,
+  onUnEmojiReact,
 }) => {
   const properStatus = status?.get('reblog') ?? status;
   const [height, setHeight] = useState(0);
@@ -163,6 +170,7 @@ export const DetailedStatus: React.FC<{
   let reblogLink;
   let quotesLink;
   let attachmentAspectRatio;
+  let emojiReactionsLink;
 
   if (properStatus.get('media_attachments').getIn([0, 'type']) === 'video') {
     attachmentAspectRatio = `${properStatus.get('media_attachments').getIn([0, 'meta', 'original', 'width'])} / ${properStatus.get('media_attachments').getIn([0, 'meta', 'original', 'height'])}`;
@@ -299,6 +307,28 @@ export const DetailedStatus: React.FC<{
     }
   }
 
+  let emojiReactionsBar = null;
+  const emojiReactionAvailableServer =
+    !isHideItem('emoji_reaction_unavailable_server') ||
+    status.getIn(['account', 'server_features', 'emoji_reaction']);
+  if (status.get('emoji_reactions')) {
+    const emojiReactions = status.get('emoji_reactions');
+    if (
+      emojiReactions.size > 0 &&
+      enableEmojiReaction &&
+      emojiReactionAvailableServer
+    ) {
+      emojiReactionsBar = (
+        <StatusEmojiReactionsBar
+          emojiReactions={emojiReactions}
+          status={status}
+          onEmojiReact={onEmojiReact}
+          onUnEmojiReact={onUnEmojiReact}
+        />
+      );
+    }
+  }
+
   if (status.get('application')) {
     applicationLink = (
       <>
@@ -320,6 +350,26 @@ export const DetailedStatus: React.FC<{
       ·<VisibilityIcon visibility={status.get('visibility')} />
     </>
   );
+
+  if (!enableEmojiReaction || !emojiReactionAvailableServer) {
+    emojiReactionsLink = '';
+  } else {
+    emojiReactionsLink = (
+      <Link
+        to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}/emoji_reactions`}
+        className='detailed-status__link'
+      >
+        <span className='detailed-status__favorites'>
+          <AnimatedNumber value={status.get('emoji_reactions_count')} />
+        </span>
+        <FormattedMessage
+          id='status.emoji_reactions'
+          defaultMessage='{count, plural, one {favorite} other {favorites}}'
+          values={{ count: status.get('emoji_reactions_count') }}
+        />
+      </Link>
+    );
+  }
 
   if (['private', 'direct'].includes(status.get('visibility') as string)) {
     reblogLink = '';
@@ -491,6 +541,7 @@ export const DetailedStatus: React.FC<{
 
             {media}
             {hashtagBar}
+            {emojiReactionsBar}
 
             {status.get('quote') && (
               <QuotedStatus
@@ -538,7 +589,7 @@ export const DetailedStatus: React.FC<{
             {reblogLink && <>·</>}
             {quotesLink}
             {quotesLink && <>·</>}
-            {favouriteLink}
+            {favouriteLink}·{emojiReactionsLink}
           </div>
         </div>
       </div>
