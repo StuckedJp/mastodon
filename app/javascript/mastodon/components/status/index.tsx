@@ -20,6 +20,7 @@ import { Poll } from '../poll';
 import { StatusActionBar } from './action_bar';
 import { StatusAttachments } from './attachments';
 import { StatusContent } from './content';
+import { StatusEmojiReactions } from './emoji_reactions';
 import { StatusHashtagBar } from './hashtag_bar';
 import { computeHashtagBarForStatus } from './hashtag_utils';
 import { StatusHeader } from './header';
@@ -90,6 +91,7 @@ export const Status: React.FC<StatusProps> = ({
   children,
   withCounters = showStatsInFeed,
   withDismiss,
+  myEmojiReactionsOnly,
   onOpen,
   showThread,
   shouldHighlightOnMount,
@@ -272,6 +274,13 @@ export const Status: React.FC<StatusProps> = ({
 
           {(variant === 'page' || (showActions && !isQuotedPost)) && (
             <footer className={classes.footer}>
+              {showActions && !isQuotedPost && (
+                <StatusEmojiReactions
+                  statusId={status.id}
+                  myEmojiReactionsOnly={myEmojiReactionsOnly}
+                />
+              )}
+
               {showActions && !isQuotedPost && (
                 <StatusActionBar
                   statusId={status.id}

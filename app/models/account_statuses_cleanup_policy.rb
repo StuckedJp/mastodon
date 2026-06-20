@@ -148,6 +148,10 @@ class AccountStatusesCleanupPolicy < ApplicationRecord
     Status.where.not(self_status_reference_exists(Favourite))
   end
 
+  def without_self_emoji_scope
+    Status.where('NOT EXISTS (SELECT 1 FROM emoji_reactions emj WHERE emj.account_id = statuses.account_id AND emj.status_id = statuses.id)')
+  end
+
   def without_self_bookmark_scope
     Status.where.not(self_status_reference_exists(Bookmark))
   end
@@ -168,6 +172,7 @@ class AccountStatusesCleanupPolicy < ApplicationRecord
     scope = Status.left_joins(:status_stat)
     scope = scope.where('COALESCE(status_stats.reblogs_count, 0) < ?', min_reblogs) unless min_reblogs.nil?
     scope = scope.where('COALESCE(status_stats.favourites_count, 0) < ?', min_favs) unless min_favs.nil?
+    scope = scope.where('COALESCE(status_stats.emoji_reactions_count, 0) < ?', min_emojis) unless min_emojis.nil?
     scope
   end
 
