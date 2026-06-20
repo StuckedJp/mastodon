@@ -31,6 +31,7 @@ namespace :api, format: false do
       scope module: :statuses do
         resources :reblogged_by, controller: :reblogged_by_accounts, only: :index
         resources :favourited_by, controller: :favourited_by_accounts, only: :index
+        resources :emoji_reactioned_by, controller: :emoji_reactioned_by_accounts, only: :index
         resource :reblog, only: :create
         resource :context, only: :show
         post :unreblog, to: 'reblogs#destroy'
@@ -59,6 +60,11 @@ namespace :api, format: false do
         resource :interaction_policy, only: :update
 
         post :translate, to: 'translations#create'
+
+        resources :emoji_reactions, only: [:create, :update, :destroy], constraints: { id: %r{[^/]+} }
+        post :emoji_unreaction, to: 'emoji_reactions#destroy'
+        post '/react/:id', to: 'emoji_reactions#create', constraints: { id: %r{[^/]+} }
+        post '/unreact/:id', to: 'emoji_reactions#destroy', constraints: { id: %r{[^/]+} }
       end
     end
 
@@ -76,6 +82,7 @@ namespace :api, format: false do
     end
 
     resources :custom_emojis, only: [:index]
+    resources :reaction_deck, only: [:index, :create]
     resources :suggestions, only: [:index, :destroy]
     resources :scheduled_statuses, only: [:index, :show, :update, :destroy]
     resources :preferences, only: [:index]
@@ -110,6 +117,7 @@ namespace :api, format: false do
     resources :blocks, only: [:index]
     resources :mutes, only: [:index]
     resources :favourites, only: [:index]
+    resources :emoji_reactions, only: [:index]
     resources :bookmarks, only: [:index]
     resources :reports, only: [:create]
     resources :trends, only: [:index], controller: 'trends/tags'

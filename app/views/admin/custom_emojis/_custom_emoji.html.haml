@@ -10,6 +10,12 @@
 
       - if custom_emoji.local?
         %span.information-badge= custom_emoji.category&.name || t('admin.custom_emojis.uncategorized')
+      - if custom_emoji.aliases_raw.present?
+        %br/
+        %span.neutral-hint= custom_emoji.aliases_raw
+      - if custom_emoji.license.present?
+        %br/
+        %span= custom_emoji.license
 
     .batch-table__row__content__extra
       - if custom_emoji.local?

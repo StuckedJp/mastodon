@@ -1,6 +1,12 @@
 import type { ApiAnnualReportState } from './api/annual_report';
 import type { ApiAccountJSON } from './api_types/accounts';
 
+type HideItemsDefinition =
+  | 'emoji_reaction_on_timeline'
+  | 'emoji_reaction_unavailable_server'
+  | 'emoji_reaction_count'
+  | 'recent_emojis';
+
 type InitialStateLanguage = [code: string, name: string, localName: string];
 
 interface InitialStateMeta {
@@ -48,7 +54,9 @@ interface InitialStateMeta {
   status_page_url: string;
   terms_of_service_enabled: boolean;
   emoji_style?: string;
+  hide_items: HideItemsDefinition[];
   wrapstodon?: InitialStateWrapstodon | null;
+  enable_emoji_reaction: boolean;
 }
 
 interface IntialStateRole {
@@ -105,6 +113,12 @@ function getMeta<K extends keyof InitialStateMeta>(
   return initialState?.meta[prop];
 }
 
+const hideItems = getMeta('hide_items');
+export const isHideItem = (key: HideItemsDefinition): boolean =>
+  hideItems?.includes(key) || false;
+export const isShowItem = (key: HideItemsDefinition): boolean =>
+  !isHideItem(key);
+
 export const activityApiEnabled = getMeta('activity_api_enabled');
 export const autoPlayGif = getMeta('auto_play_gif');
 export const boostModal = getMeta('boost_modal');
@@ -147,6 +161,7 @@ export const statusPageUrl = getMeta('status_page_url');
 export const sso_redirect = getMeta('sso_redirect');
 export const termsOfServiceEnabled = getMeta('terms_of_service_enabled');
 export const wrapstodon = getMeta('wrapstodon');
+export const enableEmojiReaction = getMeta('enable_emoji_reaction');
 
 const displayNames =
   // Intl.DisplayNames can be undefined in old browsers
