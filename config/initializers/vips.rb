@@ -15,12 +15,15 @@ Vips.block('VipsForeign', true)
 %w(
   VipsForeignLoadNsgif
   VipsForeignLoadJpeg
+  VipsForeignLoadUhdr
   VipsForeignLoadPng
   VipsForeignLoadWebp
   VipsForeignSavePng
   VipsForeignSaveSpng
   VipsForeignSaveJpeg
+  VipsForeignSaveUhdr
   VipsForeignSaveWebp
+  VipsForeignSaveVips
 ).each do |operation|
   Vips.block(operation, false)
 end

@@ -6,8 +6,21 @@ module Paperclip
     GIF_MAX_FRAMES = 3000
     GIF_PALETTE_COLORS = 32
 
+    # thumbnail updates the decoded `gainmap`; keep it as well as the compressed
+    # original and its rendering parameters so JPEG output remains Ultra HDR.
     ALLOWED_FIELDS = %w(
       icc-profile-data
+      gainmap
+      gainmap-data
+      gainmap-max-content-boost
+      gainmap-min-content-boost
+      gainmap-gamma
+      gainmap-offset-sdr
+      gainmap-offset-hdr
+      gainmap-hdr-capacity-min
+      gainmap-hdr-capacity-max
+      gainmap-use-base-cg
+      gainmap-scale-factor
     ).freeze
 
     class PixelGeometryParser
