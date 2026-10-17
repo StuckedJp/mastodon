@@ -4,11 +4,12 @@ import { FormattedMessage } from 'react-intl';
 
 import { DotsThreeIcon, ShareFatIcon } from '@phosphor-icons/react';
 
-import { statusInteraction } from '@/mastodon/actions/interactions';
+import { emojiReact, statusInteraction } from '@/mastodon/actions/interactions';
 import { fetchStatus } from '@/mastodon/actions/statuses';
+import EmojiPickerDropdown from '@/mastodon/features/compose/containers/emoji_picker_dropdown_container';
+import { enableEmojiReaction, isHideItem, quickBoosting } from '@/mastodon/initial_state';
 import { useCurrentAccountId } from '@/mastodon/hooks/useAccountId';
 import { useAccountStatus } from '@/mastodon/hooks/useStatus';
-import { quickBoosting } from '@/mastodon/initial_state';
 import type { AccountStatusShape } from '@/mastodon/models/status';
 import { useAppDispatch, useAppSelector } from '@/mastodon/store';
 
@@ -56,6 +57,45 @@ export const StatusActionBar: React.FC<StatusActionBarProps> = ({
   const currentAccountId = useCurrentAccountId();
   const { contextType } = useStatusContext();
   const statusUrl = status?.url ?? status?.uri;
+  const immutableStatus = useAppSelector((state) =>
+    state.statuses.get(statusId),
+  );
+  const canUseEmojiReactions = useAppSelector((state): boolean => {
+    const accountId = state.statuses.getIn([statusId, 'account']);
+    const policy =
+      state.accounts.getIn([
+        accountId,
+        'other_settings',
+        'emoji_reaction_policy',
+      ]) ?? 'allow';
+    const isFollowing = !!state.relationships.getIn([accountId, 'following']);
+    const isFollowedBy = !!state.relationships.getIn([accountId, 'followed_by']);
+    const followsPolicy =
+      policy !== 'followers_only' || isFollowing;
+    const followedPolicy =
+      policy !== 'following_only' || isFollowedBy;
+    const mutualPolicy =
+      policy !== 'mutuals_only' || (isFollowing && isFollowedBy);
+    const outsidePolicy =
+      policy !== 'outside_only' || isFollowing || isFollowedBy;
+    const serverSupportsReactions = state.accounts.getIn([
+      accountId,
+      'server_features',
+      'emoji_reaction',
+    ]);
+
+    return Boolean(
+      enableEmojiReaction &&
+      policy !== 'block' &&
+      (!isHideItem('emoji_reaction_unavailable_server') ||
+        serverSupportsReactions) &&
+      (accountId === currentAccountId ||
+        (followsPolicy &&
+          followedPolicy &&
+          mutualPolicy &&
+          outsidePolicy))
+    );
+  });
 
   // Actions
   const dispatch = useAppDispatch();
@@ -75,6 +115,17 @@ export const StatusActionBar: React.FC<StatusActionBarProps> = ({
       dispatch(statusInteraction({ statusId, intent: 'copy', contextType }));
     }
   }, [contextType, dispatch, statusId, statusUrl]);
+
+  const handleEmojiPick = useCallback(
+    (emoji: unknown) => {
+      if (currentAccountId && immutableStatus) {
+        dispatch(emojiReact(immutableStatus, emoji));
+      } else {
+        dispatch(statusInteraction({ statusId, intent: 'favourite', contextType }));
+      }
+    },
+    [contextType, currentAccountId, dispatch, immutableStatus, statusId],
+  );
 
   const { reply, like, bookmark } = useStatusIcons(statusId);
 
@@ -113,10 +164,15 @@ export const StatusActionBar: React.FC<StatusActionBarProps> = ({
         tooltip={{ type: 'label', text: like.title }}
         leadingIcon={like.icon}
         onClick={like.action}
-        className={classes.actionsButtonGap}
       >
         {withCounters && like.counter}
       </ToggleButton>
+
+      {canUseEmojiReactions && (
+        <EmojiPickerDropdown onPickEmoji={handleEmojiPick} inverted={false} />
+      )}
+
+      <div className={classes.actionsButtonGap} />
 
       {isPublic && (
         <IconButton

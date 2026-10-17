@@ -183,7 +183,7 @@ const ComposeEmojiDropdown: React.FC<
       >
         <EmojiPicker
           perLine={PER_LINE}
-          emojiSize={22}
+          emojiSize={40}
           color=''
           emoji=''
           title={intl.formatMessage(messages.emoji)}
