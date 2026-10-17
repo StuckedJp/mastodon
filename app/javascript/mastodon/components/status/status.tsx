@@ -19,6 +19,7 @@ import { Poll } from '../poll';
 import { StatusActionBar } from './action_bar';
 import { StatusAttachments } from './attachments';
 import { StatusContent } from './content';
+import { StatusEmojiReactions } from './emoji_reactions';
 import { StatusHashtagBar } from './hashtag_bar';
 import { StatusRedesignHeader } from './header';
 import {
@@ -40,6 +41,7 @@ type StatusRedesignProps = Merge<
   {
     accountId?: string;
     contextType?: StatusContextType;
+    myEmojiReactionsOnly?: boolean;
     variant?: StatusVariant;
   }
 >;
@@ -89,6 +91,7 @@ export const StatusRedesign: React.FC<StatusRedesignProps> = ({
   onOpen,
   showThread,
   shouldHighlightOnMount,
+  myEmojiReactionsOnly,
   variant = contextToVariant(contextType),
   nextId,
 }) => {
@@ -245,6 +248,11 @@ export const StatusRedesign: React.FC<StatusRedesignProps> = ({
 
             {children}
           </StatusContent>
+
+          <StatusEmojiReactions
+            statusId={status.id}
+            myEmojiReactionsOnly={myEmojiReactionsOnly}
+          />
 
           <StatusHashtagBar
             hashtags={hashtagsInBar}
