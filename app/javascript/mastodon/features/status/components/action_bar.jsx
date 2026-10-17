@@ -26,7 +26,7 @@ import {
   StatusReplyAllIcon,
   StatusReplyIcon,
 } from '@/mastodon/components/status/icons';
-import EmojiPickerDropdown from '../../compose/containers/emoji_picker_dropdown_container';
+import { EmojiPickerButton } from '@/mastodon/components/emoji/picker';
 
 const baseMessages = defineMessages({
   delete: { id: 'status.delete', defaultMessage: 'Delete' },
@@ -356,7 +356,7 @@ class ActionBar extends PureComponent {
     const denyFromAll = emojiReactionPolicy !== 'block' && emojiReactionPolicy !== 'block';
     const emojiPickerDropdown = (enableEmojiReaction && emojiReactionAvailableServer && denyFromAll && (writtenByMe || (following && followed && mutual && outside)) && (
       <div className='detailed-status__button'>
-        <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} inverted={false} />
+        <EmojiPickerButton onPick={this.handleEmojiPick} />
       </div>
     )) || (enableEmojiReaction && (
       <div className='detailed-status__button__blank' />

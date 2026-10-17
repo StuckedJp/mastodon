@@ -74,6 +74,7 @@ export const EmojiPickerButton: React.FC<{
     <>
       <IconButton
         size='sm'
+        variant='ghost'
         icon={SmileyIcon}
         ref={setTarget}
         onClick={onToggle}
@@ -220,7 +221,7 @@ export const EmojiDropdown: React.FC<
       >
         <EmojiPicker
           perLine={PER_LINE}
-          emojiSize={22}
+          emojiSize={40}
           color=''
           emoji=''
           title={intl.formatMessage(messages.emoji)}

@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
-import { FormattedMessage, defineMessages, useIntl } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 
 import type {
   DragStartEvent,
@@ -45,7 +45,7 @@ import { Column } from 'mastodon/components/column';
 import { ColumnHeader } from 'mastodon/components/column/header';
 import { Icon } from 'mastodon/components/icon';
 import { LoadingIndicator } from 'mastodon/components/loading_indicator';
-import EmojiPickerDropdown from 'mastodon/features/compose/containers/emoji_picker_dropdown_container';
+import { EmojiPickerButton } from 'mastodon/components/emoji/picker';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
 import { usePickerEmojis } from '../emoji/picker';
@@ -122,7 +122,7 @@ const ReactionEmoji: React.FC<{
       <div className='reaction_deck__emoji'>
         <div className='reaction_deck__emoji__wrapper'>
           <div className='reaction_deck__emoji__wrapper__content'>
-            <EmojiPickerDropdown onPickEmoji={handleChange} />
+            <EmojiPickerButton onPick={handleChange} />
             <div>{content}</div>
           </div>
           <div className='reaction_deck__emoji__wrapper__options'>
@@ -294,14 +294,7 @@ export const ReactionDeck: React.FC<{
       </DndContext>
 
       <div>
-        <EmojiPickerDropdown
-          onPickEmoji={handleAdd}
-          button={
-            <Button secondary>
-              <FormattedMessage id='reaction_deck.add' defaultMessage='Add' />
-            </Button>
-          }
-        />
+        <EmojiPickerButton onPick={handleAdd} />
       </div>
     </Column>
   );

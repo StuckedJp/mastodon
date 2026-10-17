@@ -165,6 +165,11 @@
       visibility 0s linear 0s,
       opacity var(--fade-time) ease-in-out;
   }
+
+  // カスタム絵文字のマウスホバー拡大に対応。これが無いと上下が欠ける。
+  &:has(:global(.emojione:hover)) {
+    overflow: visible;
+  }
 }
 
 .hashtagsWrapper,

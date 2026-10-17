@@ -48,6 +48,7 @@ export interface StatusContainerProps {
   skipPrepend?: boolean;
   avatarSize?: number;
   withDismiss?: boolean;
+  myEmojiReactionsOnly?: boolean;
 }
 
 export const TypedStatusContainer =

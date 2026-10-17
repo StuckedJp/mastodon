@@ -24,7 +24,7 @@ import { quoteItemState } from '../../boost_button_utils';
 import { selectStatusConditions } from '@/mastodon/selectors/statuses';
 import { isRedesignEnabled } from '@/mastodon/utils/environment';
 import { StatusBookmarkActiveIcon, StatusBookmarkIcon, StatusLikeActiveIcon, StatusLikeIcon, StatusReplyAllIcon, StatusReplyIcon } from '../../icons';
-import EmojiPickerDropdown from '@/mastodon/features/compose/containers/emoji_picker_dropdown_container';
+import { EmojiPickerButton } from '@/mastodon/components/emoji/picker';
 
 
 const baseMessages = defineMessages({
@@ -411,7 +411,7 @@ class StatusActionBar extends ImmutablePureComponent {
     const denyFromAll = emojiReactionPolicy !== 'block' && emojiReactionPolicy !== 'block';
     const emojiPickerDropdown = (enableEmojiReaction && emojiReactionAvailableServer && denyFromAll && (writtenByMe || (following && followed && mutual && outside)) && (
       <div className='status__action-bar__button-wrapper'>
-        <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} inverted={false} />
+        <EmojiPickerButton onPick={this.handleEmojiPick} />
       </div>
     )) || (enableEmojiReaction && (
       <div className='status__action-bar__button-wrapper status__action-bar__button-wrapper__blank' />

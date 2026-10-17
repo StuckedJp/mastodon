@@ -902,6 +902,7 @@
   "status.emoji_reaction": "絵文字リアクション",
   "status.emoji_reaction.pick": "絵文字を追加する",
   "status.emoji_reactions": "{count, plural, one {絵文字} other {絵文字}}",
+  "status.emoji_reactions_other_users": "（他、{count}人のユーザー）",
   "status.favourite": "お気に入り",
   "status.filter": "この投稿をフィルターする",
   "status.history.created": "{name}さんが{date}に作成",

@@ -1,6 +1,6 @@
 import { createAppSelector } from '@/mastodon/store/typed_functions';
 
-export const PER_LINE = 8;
+export const PER_LINE = 5;
 export const LINES = 2;
 
 const DEFAULTS = [
