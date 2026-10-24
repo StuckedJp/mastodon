@@ -1425,6 +1425,7 @@
   "status.edited_hint": "Show version history",
   "status.edited_x_times": "Edited {count, plural, one {{count} time} other {{count} times}}",
   "status.embed": "Get embed code",
+  "status.emoji_reactions_other_users": "(and {count, plural, one {# other user} other {# other users}})",
   "status.favourite": "Favorite",
   "status.favourites_count": "{count, plural, one {{counter} favorite} other {{counter} favorites}}",
   "status.filter": "Filter this post",

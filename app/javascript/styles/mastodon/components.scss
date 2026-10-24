@@ -1782,6 +1782,25 @@ body > [data-popover-placement] {
   }
 }
 
+[popover].emoji-reactions-bar__tooltip {
+  -webkit-line-clamp: unset;
+  background: #fff;
+  color: #000;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px #0003;
+}
+
+.emoji-reactions-bar__tooltip-account {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 3px;
+
+  .account__avatar {
+    flex-shrink: 0;
+  }
+}
+
 .status__emoji-reactions-bar {
   display: flex;
   flex-wrap: wrap;
