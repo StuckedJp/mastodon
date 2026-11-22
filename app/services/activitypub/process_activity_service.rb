@@ -76,6 +76,10 @@ class ActivityPub::ProcessActivityService < BaseService
 
     return if !@account.is_a?(Account) || different_actor? || suspended_actor? || @account.local?
 
+    # any namespaces for general-original activity type
+    @json['type'] = 'EmojiReact' if original_json['type'] == 'EmojiReact'
+    @json['type'] = 'EmojiReaction' if original_json['type'] == 'EmojiReaction'
+
     activity = ActivityPub::Activity.factory(@json, @account, **@options)
     activity&.perform
   rescue JSON::ParserError

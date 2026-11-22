@@ -12,6 +12,7 @@ class Api::V1::Timelines::HomeController < Api::V1::Timelines::BaseController
     with_read_replica do
       @statuses = load_statuses
       @relationships = StatusRelationshipsPresenter.new(@statuses, current_user&.account_id)
+      @emoji_reactions = EmojiReactionAccountsPresenter.new(@statuses, current_user&.account_id)
     end
 
     add_async_refresh_header(account_home_feed.async_refresh, retry_seconds: 5)
@@ -19,6 +20,7 @@ class Api::V1::Timelines::HomeController < Api::V1::Timelines::BaseController
     render json: @statuses,
            each_serializer: REST::StatusSerializer,
            relationships: @relationships,
+           emoji_reaction_permitted_account_ids: @emoji_reactions,
            status: account_home_feed.regenerating? ? 206 : 200
   end
 

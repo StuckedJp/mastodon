@@ -1324,6 +1324,7 @@
   "status.edited_badge": "Edited",
   "status.edited_hint": "Show version history",
   "status.embed": "Get embed code",
+  "status.emoji_reactions_other_users": "(and {count, plural, one {# other user} other {# other users}})",
   "status.favourite": "Favorite",
   "status.filter": "Filter this post",
   "status.follow": "Follow @{name}",
