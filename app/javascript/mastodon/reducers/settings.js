@@ -162,7 +162,17 @@ const changeColumnParams = (state, uuid, path, value) => {
     .set('saved', false);
 };
 
-const updateFrequentEmojis = (state, emoji) => state.update('frequentlyUsedEmojis', ImmutableMap(), map => map.update(emoji.id, 0, count => count + 1)).set('saved', false);
+const updateFrequentEmojis = (state, emoji) => state
+  .update('frequentlyUsedEmojis', ImmutableMap(), map => {
+    const latestTimestamp = map.valueSeq().reduce((latest, value) =>
+      typeof value === 'number' && value >= 1_000_000_000_000
+        ? Math.max(latest, value)
+        : latest, 0);
+    const usedAt = Math.max(Date.now(), latestTimestamp + 1);
+
+    return map.delete(emoji.id).set(emoji.id, usedAt);
+  })
+  .set('saved', false);
 
 const updateFrequentLanguages = (state, language) => state.update('frequentlyUsedLanguages', ImmutableMap(), map => map.update(language, 0, count => count + 1)).set('saved', false);
 

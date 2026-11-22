@@ -35,8 +35,7 @@ export const selectFrequentlyUsedEmoji = createAppSelector(
     }
     let emojis = emojiCounters
       .toArray()
-      .sort((a, b) => a[1] - b[1])
-      .reverse()
+      .sort((a, b) => b[1] - a[1])
       .slice(0, PER_LINE * LINES)
       .map(([emoji]) => emoji);
 
